@@ -54,7 +54,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             
             {/* Admin Login Route - Public Access */}
-            <Route path="/admin" element={<LoginPage />} />
+            <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
             <Route path="/admin/login" element={<LoginPage />} />
 
             {/* Protected Admin Dashboard Routes */}

@@ -22,7 +22,7 @@ export default function LoginPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const from = location.state?.from?.pathname || '/admin/dashboard';
+      const from = (location.state as any)?.from?.pathname || '/admin/dashboard';
       navigate(from, { replace: true });
     }
   }, [isAuthenticated, navigate, location]);

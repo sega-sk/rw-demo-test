@@ -7,6 +7,17 @@
   to = "/index.html"
   status = 200
 
+# Admin routes - specific handling
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/index.html"
+  status = 200
+
 # Product detail routes
 [[redirects]]
   from = "/catalog/:productType/:slug"
@@ -22,12 +33,6 @@
 # Merchandise routes
 [[redirects]]
   from = "/merchandise/*"
-  to = "/index.html"
-  status = 200
-
-# Admin routes
-[[redirects]]
-  from = "/admin/*"
   to = "/index.html"
   status = 200
 
