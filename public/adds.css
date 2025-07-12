@@ -327,6 +327,12 @@ body .bg-blue-400 {
     max-width: 88vw;
 }
 
+@media(max-width: 1023px) {
+  .product-memorabilia-wrapper {
+    margin-top: 4rem;
+  }
+}
+
 .product-memorabilia-wrapper .w-full.h-48 {
       align-items: center !important;
     width: 100px;
