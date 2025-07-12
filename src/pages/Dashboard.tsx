@@ -133,6 +133,7 @@ export default function Dashboard() {
       changeType: 'positive', 
       icon: MessageSquare 
     }] : []),
+    /*
     { 
       name: 'Total Value', 
       value: formatPrice(stats.totalValue), 
@@ -140,6 +141,7 @@ export default function Dashboard() {
       changeType: 'positive', 
       icon: DollarSign 
     },
+    */
   ];
 
   const isLoading = productsLoading || memorabiliaLoading || merchandiseLoading || (user?.role === 'admin' && leadsLoading);
