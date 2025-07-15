@@ -25,7 +25,7 @@ export default function ProductList() {
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
   const [showAllItems, setShowAllItems] = useState(false);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   // Fetch products from API
   const { data: productsData, loading, execute: refetchProducts } = useApi(
@@ -85,7 +85,7 @@ export default function ProductList() {
 
   // Navigation handlers
   const handleAddProduct = () => {
-    navigate('/products/add');
+    navigate('/admin/products/add');
     console.log('Navigating to add product page, isAuthenticated:', isAuthenticated);
   };
 

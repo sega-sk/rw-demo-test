@@ -10,15 +10,26 @@ import WebsiteFooter from '../../components/Website/WebsiteFooter';
 import SEOHead from '../../components/UI/SEOHead';
 import OptimizedImage from '../../components/UI/OptimizedImage';
 import ResponsiveImage from '../../components/UI/ResponsiveImage';
+import { sendLead } from '../../services/leadService';
+import NotificationBanner from '../../components/UI/NotificationBanner';
+import { useNotification } from '../../hooks/useNotification';
 
 // Homepage component - Enhanced by SeGa_cc
 export default function Homepage() {
   const navigate = useNavigate();
+  const { notification, showNotification, clearNotification } = useNotification();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [contactFormData, setContactFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    comments: ''
+  });
   
   // Touch/swipe state for mobile
   const [touchStart, setTouchStart] = useState(null);
@@ -122,6 +133,21 @@ export default function Homepage() {
 
   const handleViewCollection = () => {
     navigate('/catalog');
+  };
+
+  // In your contact form submit handler:
+  const handleContactFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await sendLead({
+        ...contactFormData,
+        formType: 'contact_us'
+      });
+      showNotification('Thank you for contacting us!', 'success');
+      // ...reset form, close modal, etc...
+    } catch (err) {
+      showNotification('Failed to send your message. Please try again.', 'error');
+    }
   };
 
   return (
@@ -401,12 +427,14 @@ export default function Homepage() {
             {/* Contact Form */}
             <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg border border-gray-100">
               <h2 className="text-3xl md:text-4xl font-bebas mb-8 text-gray-900 text-center lg:text-left">GET IN TOUCH</h2>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleContactFormSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">First Name*</label>
                     <input
                       type="text"
+                      value={contactFormData.firstName}
+                      onChange={(e) => setContactFormData({ ...contactFormData, firstName: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 font-inter bg-white transition-all"
                     />
                   </div>
@@ -414,6 +442,8 @@ export default function Homepage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">Last Name*</label>
                     <input
                       type="text"
+                      value={contactFormData.lastName}
+                      onChange={(e) => setContactFormData({ ...contactFormData, lastName: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 font-inter bg-white transition-all"
                     />
                   </div>
@@ -423,6 +453,8 @@ export default function Homepage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">Email*</label>
                     <input
                       type="email"
+                      value={contactFormData.email}
+                      onChange={(e) => setContactFormData({ ...contactFormData, email: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 font-inter bg-white transition-all"
                     />
                   </div>
@@ -430,6 +462,8 @@ export default function Homepage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">Phone*</label>
                     <input
                       type="tel"
+                      value={contactFormData.phone}
+                      onChange={(e) => setContactFormData({ ...contactFormData, phone: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 font-inter bg-white transition-all"
                     />
                   </div>
@@ -438,6 +472,8 @@ export default function Homepage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">Comments</label>
                   <textarea
                     rows={4}
+                    value={contactFormData.comments}
+                    onChange={(e) => setContactFormData({ ...contactFormData, comments: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 font-inter bg-white transition-all resize-none"
                     placeholder="Tell us about your event or inquiry..."
                   />
@@ -500,6 +536,17 @@ export default function Homepage() {
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
       />
+
+      {/* Notification Banner */}
+      {notification && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md">
+          <NotificationBanner
+            type={notification.type}
+            message={notification.message}
+            onClose={clearNotification}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -521,7 +568,8 @@ function TrendingModelsSlider({ products, navigate }) {
   }, []);
   
   const itemsPerSlide = isMobile ? 1 : 4;
-  const trendingProducts = products.slice(0, 12); // Use actual products from API
+  // Only trending products
+  const trendingProducts = products.filter(p => p.is_trending_product === true).slice(0, 12);
   const totalSlides = Math.ceil(trendingProducts.length / itemsPerSlide);
 
   // Auto-advance slides every 4 seconds

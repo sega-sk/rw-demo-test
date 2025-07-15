@@ -147,7 +147,7 @@ export default function Header({ title, breadcrumb = [], className = '' }: Heade
 
             {/* Profile Dropdown Menu */}
             {showProfileMenu && (
-              <div className="absolute right-0 top-12 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+              <div className="absolute right-0 top-12 w-58 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                 <div className="py-2">
                   <div className="px-4 py-2 border-b border-gray-100">
                     <p className="text-sm font-medium text-gray-900">{user?.email || 'User'}</p>

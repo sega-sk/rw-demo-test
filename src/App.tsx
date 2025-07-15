@@ -23,6 +23,9 @@ import MemorabiliaList from './pages/Memorabilia/MemorabiliaList';
 import MerchandiseList from './pages/Merchandise/MerchandiseList';
 import ProfilePage from './pages/Profile/ProfilePage';
 import UsersList from './pages/Users/UsersList';
+import AddMemorabilia from './pages/Memorabilia/AddMemorabilia';
+import AddMerchandise from './pages/Merchandise/AddMerchandise';
+import AddUser from './pages/Users/AddUser';
 
 // Main website components
 import Homepage from './pages/Website/Homepage';
@@ -68,6 +71,30 @@ function App() {
               <ProtectedRoute>
                 <Layout title="Add Product" breadcrumb={['Dashboard', 'Add Product']}>
                   <AddProduct />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/memorabilia/add" element={
+              <ProtectedRoute>
+                <Layout title="Add Memorabilia" breadcrumb={['Dashboard', 'Add Memorabilia']}>
+                  <AddMemorabilia />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/merchandise/add" element={
+              <ProtectedRoute>
+                <Layout title="Add Merchandise" breadcrumb={['Dashboard', 'Add Merchandise']}>
+                  <AddMerchandise />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/users/add" element={
+              <ProtectedRoute>
+                <Layout title="Add User" breadcrumb={['Dashboard', 'Add User']}>
+                  <AddUser />
                 </Layout>
               </ProtectedRoute>
             } />

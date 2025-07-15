@@ -16,8 +16,6 @@ import OptimizedImage from '../../components/UI/OptimizedImage';
 
 export default function MemorabiliaList() {
   const navigate = useNavigate();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Memorabilia | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
@@ -83,7 +81,6 @@ export default function MemorabiliaList() {
       keywords: item.keywords,
       product_ids: [],
     });
-    setIsEditModalOpen(true);
   };
 
   const handleDelete = async (itemId: string) => {
@@ -148,8 +145,6 @@ export default function MemorabiliaList() {
         keywords: [],
         product_ids: [],
       });
-      setIsAddModalOpen(false);
-      setIsEditModalOpen(false);
       setSelectedItem(null);
       
       // Refresh data
@@ -174,191 +169,8 @@ export default function MemorabiliaList() {
       keywords: [],
       product_ids: [],
     });
-    setIsAddModalOpen(false);
-    setIsEditModalOpen(false);
     setSelectedItem(null);
   };
-
-  // Enhanced Add Modal Component
-  const AddMemorabiliaModal = () => (
-    <Modal
-      isOpen={isAddModalOpen}
-      onClose={handleCancel}
-      title="Add Memorabilia Item"
-      size="lg"
-    >
-      <form className="space-y-6" onSubmit={handleSaveItem}>
-        <div className="space-y-4">
-          <ImageUploader 
-            images={formData.photos}
-            onImagesChange={(images) => setFormData(prev => ({ ...prev, photos: images }))}
-          />
-        </div>
-
-        <FormField label="Memorabilia title" required>
-          <Input
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Add Title Here"
-            required
-          />
-        </FormField>
-
-        <FormField label="Memorabilia Subtitle">
-          <Input
-            name="subtitle"
-            value={formData.subtitle}
-            onChange={handleInputChange}
-            placeholder="Add Subtitle Here"
-          />
-        </FormField>
-
-        <FormField label="Connection Tags">
-          <div className="space-y-2">
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.keywords.map((tag, index) => (
-                <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="ml-2 hover:text-red-600"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex space-x-2">
-              <Input 
-                placeholder="+Add Tags" 
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              />
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddTag}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </FormField>
-
-        <FormField label="Memorabilia Description">
-          <Textarea 
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            rows={4}
-            placeholder="Add Description Here"
-          />
-        </FormField>
-
-        <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={creating}>
-            Save
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  );
-
-  // Enhanced Edit Modal Component
-  const EditMemorabiliaModal = () => (
-    <Modal
-      isOpen={isEditModalOpen}
-      onClose={handleCancel}
-      title="Edit Memorabilia Item"
-      size="lg"
-    >
-      <form className="space-y-6" onSubmit={handleSaveItem}>
-        <div className="space-y-4">
-          <ImageUploader 
-            images={formData.photos}
-            onImagesChange={(images) => setFormData(prev => ({ ...prev, photos: images }))}
-          />
-        </div>
-
-        <FormField label="Memorabilia title" required>
-          <Input
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-          />
-        </FormField>
-
-        <FormField label="Memorabilia Subtitle">
-          <Input
-            name="subtitle"
-            value={formData.subtitle}
-            onChange={handleInputChange}
-          />
-        </FormField>
-
-        <FormField label="Connection Tags">
-          <div className="space-y-2">
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.keywords.map((tag, index) => (
-                <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="ml-2 hover:text-red-600"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex space-x-2">
-              <Input 
-                placeholder="+Add Tags" 
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              />
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddTag}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </FormField>
-
-        <FormField label="Memorabilia Description">
-          <Textarea 
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            rows={4}
-          />
-        </FormField>
-
-        <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={updating}>
-            Save Changes
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  );
 
   // Use API data if available, otherwise use dummy data
   const memorabiliaItems = memorabiliaData?.rows || [];
@@ -369,7 +181,7 @@ export default function MemorabiliaList() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Memorabilia</h1>
         
         <div className="flex items-center justify-between mb-4">
-          <Button icon={Plus} onClick={() => setIsAddModalOpen(true)} className="btn-hover">
+          <Button icon={Plus} onClick={() => navigate('/admin/memorabilia/add')} className="btn-hover">
             Add New
           </Button>
           
@@ -571,8 +383,6 @@ export default function MemorabiliaList() {
         </div>
       )}
 
-      <AddMemorabiliaModal />
-      <EditMemorabiliaModal />
     </div>
   );
 }

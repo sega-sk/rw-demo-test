@@ -1,6 +1,11 @@
 /* Additional CSS for custom styling */
 /* SeGa edition */
 
+body .group-hover\:scale-105,
+body .hover\:scale-105 {
+  transform: none !important;
+}
+
 body img[src*="/logo-color.webp"] {
   width: 284px !important;
 }
@@ -29,6 +34,12 @@ body .group:hover .group-hover\:border-blue-500 {
 }
 body .bg-blue-400 {
   background: #ca8a04 !important;
+}
+
+@media(max-width:767px) {
+  header.admin-header {
+    padding: 4rem .25rem .5rem;
+  }
 }
 
 .website-header button.flex.items-center > .relative.h-8.w-auto {
@@ -100,6 +111,14 @@ body .bg-blue-400 {
   max-height: 900px !important; /* Maximum height for very large screens */
   background-color: #000000 !important;
   overflow: hidden !important;
+}
+
+.homepage-hero-slider .slider-container > .ease-in-out {
+    transform: none !important;
+}
+
+body .shadow-xl {
+    box-shadow: 0 3px 6px rgba(0,0,0,.16);
 }
 
 @media(max-width: 767px) {
@@ -182,6 +201,12 @@ body .bg-blue-400 {
 .product-detail-main-slider:hover {
   box-shadow: 0 35px 70px rgba(0, 0, 0, 0.35) !important;
   transform: translateY(-2px) !important;
+}
+
+body .product-detail-main-slider {
+    box-shadow: 0 3px 6px rgba(0,0,0,.16) !important;
+    transform: none !important;
+    border: none !important;
 }
 
 /* Cinematic lighting effect */
@@ -430,6 +455,10 @@ html {
   position: relative !important;
   left: 0 !important;
   right: 0 !important;
+
+  max-width: 1400px !important;
+  margin: 0 auto 1.5rem !important;
+  box-shadow: none !important;
 }
 
 /* Ensure all interactive elements stay clickable */

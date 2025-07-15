@@ -11,6 +11,8 @@ import WebsiteHeader from '../../components/Website/WebsiteHeader';
 import WebsiteFooter from '../../components/Website/WebsiteFooter';
 import SEOHead from '../../components/UI/SEOHead';
 import OptimizedImage from '../../components/UI/OptimizedImage';
+import NotificationBanner from '../../components/UI/NotificationBanner';
+import { useNotification } from '../../hooks/useNotification';
 
 export default function ProductDetailPage() {
   const { productType, slug } = useParams();
@@ -21,6 +23,7 @@ export default function ProductDetailPage() {
   const [showGallery, setShowGallery] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const { toggleFavorite, isFavorite } = useFavorites();
+  const { notification, showNotification, clearNotification } = useNotification();
 
   // Fetch product details
   const { data: product, loading } = useApi(
@@ -47,6 +50,12 @@ export default function ProductDetailPage() {
     }
   );
 
+  // Fetch all products for related lookup
+  const { data: allProductsData } = useApi(
+    () => apiService.getProducts({ limit: 100 }),
+    { immediate: true, cacheKey: 'all-products', cacheTTL: 10 * 60 * 1000 }
+  );
+
   // Fetch memorabilia
   const { data: memorabiliaData } = useApi(
     () => apiService.getMemorabilia({ limit: 6 }),
@@ -71,8 +80,14 @@ export default function ProductDetailPage() {
 
   // Use API data if available, otherwise find from dummy data
   const currentProduct = product;
-  const relatedProducts = relatedProductsData?.rows?.filter(p => p.id !== currentProduct?.id) || 
-    [];
+
+  // Related products: only those whose IDs are in currentProduct.products
+  const relatedProducts =
+    (currentProduct?.products && allProductsData?.rows
+      ? allProductsData.rows.filter(p =>
+          currentProduct.products.some((linked: any) => linked.id === p.id)
+        )
+      : []) || [];
   
   // Use API data if available, otherwise use dummy data
   const memorabiliaItems = memorabiliaData?.rows?.slice(0, 6) || [];
@@ -566,12 +581,25 @@ export default function ProductDetailPage() {
         </div>
       )}
 
-      {/* Contact Modal */}
-      <ContactModal 
+      {/* Notification Banner */}
+      {notification && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md">
+          <NotificationBanner
+            type={notification.type}
+            message={notification.message}
+            onClose={clearNotification}
+          />
+        </div>
+      )}
+
+      {/* Contact Modal as right sidebar */}
+      <ContactModal
         isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}
         productTitle={currentProduct.title}
         productPrice={priceInfo.displayPrice}
+        apiSlug="rent_a_product"
+        showNotification={showNotification}
       />
 
       {/* Search Modal */}

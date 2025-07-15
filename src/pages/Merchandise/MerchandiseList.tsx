@@ -16,8 +16,6 @@ import OptimizedImage from '../../components/UI/OptimizedImage';
 
 export default function MerchandiseList() {
   const navigate = useNavigate();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Merchandise | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
@@ -84,7 +82,6 @@ export default function MerchandiseList() {
       keywords: item.keywords,
       product_ids: [],
     });
-    setIsEditModalOpen(true);
   };
 
   const handleDelete = async (itemId: string) => {
@@ -150,9 +147,6 @@ export default function MerchandiseList() {
         keywords: [],
         product_ids: [],
       });
-      setIsAddModalOpen(false);
-      setIsEditModalOpen(false);
-      setSelectedItem(null);
       
       // Refresh data
       refetchMerchandise();
@@ -177,212 +171,7 @@ export default function MerchandiseList() {
       keywords: [],
       product_ids: [],
     });
-    setIsAddModalOpen(false);
-    setIsEditModalOpen(false);
-    setSelectedItem(null);
   };
-
-  // Enhanced Add Modal Component
-  const AddMerchandiseModal = () => (
-    <Modal
-      isOpen={isAddModalOpen}
-      onClose={handleCancel}
-      title="Add Merchandise Item"
-      size="lg"
-    >
-      <form className="space-y-6" onSubmit={handleSaveItem}>
-        <div className="space-y-4">
-          <ImageUploader 
-            images={formData.photos}
-            onImagesChange={(images) => setFormData(prev => ({ ...prev, photos: images }))}
-          />
-        </div>
-
-        <FormField label="Merchandise title" required>
-          <Input
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Add Title Here"
-            required
-          />
-        </FormField>
-
-        <FormField label="Merchandise Subtitle">
-          <Input
-            name="subtitle"
-            value={formData.subtitle}
-            onChange={handleInputChange}
-            placeholder="Add Subtitle Here"
-          />
-        </FormField>
-
-        <FormField label="Price" required>
-          <Input
-            name="price"
-            type="number"
-            value={formData.price}
-            onChange={handleInputChange}
-            placeholder="0.00"
-            required
-          />
-        </FormField>
-
-        <FormField label="Connection Tags">
-          <div className="space-y-2">
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.keywords.map((tag, index) => (
-                <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-600">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="ml-2 hover:text-red-600"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex space-x-2">
-              <Input 
-                placeholder="+Add Tags" 
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              />
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddTag}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </FormField>
-
-        <FormField label="Merchandise Description">
-          <Textarea 
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            rows={4}
-            placeholder="Add Description Here"
-          />
-        </FormField>
-
-        <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={creating}>
-            Save
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  );
-
-  // Enhanced Edit Modal Component
-  const EditMerchandiseModal = () => (
-    <Modal
-      isOpen={isEditModalOpen}
-      onClose={handleCancel}
-      title="Edit Merchandise Item"
-      size="lg"
-    >
-      <form className="space-y-6" onSubmit={handleSaveItem}>
-        <div className="space-y-4">
-          <ImageUploader 
-            images={formData.photos}
-            onImagesChange={(images) => setFormData(prev => ({ ...prev, photos: images }))}
-          />
-        </div>
-
-        <FormField label="Merchandise title" required>
-          <Input
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-          />
-        </FormField>
-
-        <FormField label="Merchandise Subtitle">
-          <Input
-            name="subtitle"
-            value={formData.subtitle}
-            onChange={handleInputChange}
-          />
-        </FormField>
-
-        <FormField label="Price" required>
-          <Input
-            name="price"
-            type="number"
-            value={formData.price}
-            onChange={handleInputChange}
-            required
-          />
-        </FormField>
-
-        <FormField label="Connection Tags">
-          <div className="space-y-2">
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.keywords.map((tag, index) => (
-                <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-600">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="ml-2 hover:text-red-600"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex space-x-2">
-              <Input 
-                placeholder="+Add Tags" 
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              />
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddTag}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </FormField>
-
-        <FormField label="Merchandise Description">
-          <Textarea 
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            rows={4}
-          />
-        </FormField>
-
-        <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={updating}>
-            Save Changes
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  );
 
   // Use API data if available, otherwise use dummy data
   const merchandiseItems = merchandiseData?.rows || [];
@@ -393,7 +182,7 @@ export default function MerchandiseList() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Merchandise</h1>
         
         <div className="flex items-center justify-between mb-4">
-          <Button icon={Plus} onClick={() => setIsAddModalOpen(true)} className="btn-hover">
+          <Button icon={Plus} onClick={() => navigate('/admin/merchandise/add')} className="btn-hover">
             Add New
           </Button>
           
@@ -631,8 +420,7 @@ export default function MerchandiseList() {
         </div>
       )}
 
-      <AddMerchandiseModal />
-      <EditMerchandiseModal />
+      {/* Only keep EditMerchandiseModal if present */}
     </div>
   );
 }

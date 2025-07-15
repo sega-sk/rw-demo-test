@@ -22,7 +22,6 @@ const roleOptions = [
 export default function UsersList() {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -161,7 +160,6 @@ export default function UsersList() {
         password: '',
         role: 'user',
       });
-      setIsAddModalOpen(false);
       setIsEditModalOpen(false);
       setSelectedUser(null);
       
@@ -184,7 +182,6 @@ export default function UsersList() {
       password: '',
       role: 'user',
     });
-    setIsAddModalOpen(false);
     setIsEditModalOpen(false);
     setSelectedUser(null);
   };
@@ -230,59 +227,6 @@ export default function UsersList() {
         return 'info';
     }
   };
-
-  // Add User Modal
-  const AddUserModal = () => (
-    <Modal
-      isOpen={isAddModalOpen}
-      onClose={handleCancel}
-      title="Add New User"
-      size="md"
-    >
-      <form className="space-y-6" onSubmit={handleSaveUser}>
-        <FormField label="Email Address" required>
-          <Input
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="user@example.com"
-            required
-          />
-        </FormField>
-
-        <FormField label="Password" required>
-          <Input
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            placeholder="Enter password"
-            required
-          />
-        </FormField>
-
-        <FormField label="Role" required>
-          <Select
-            name="role"
-            value={formData.role}
-            onChange={handleInputChange}
-            options={roleOptions}
-            required
-          />
-        </FormField>
-
-        <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={creating}>
-            Create User
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  );
 
   // Edit User Modal
   const EditUserModal = () => (
@@ -344,8 +288,8 @@ export default function UsersList() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">User Management</h1>
         
         <div className="flex items-center justify-between mb-4">
-          <Button icon={Plus} onClick={() => setIsAddModalOpen(true)} className="btn-hover">
-            Add User
+          <Button icon={Plus} onClick={() => navigate('/admin/users/add')} className="btn-hover">
+            Add New
           </Button>
           
           <div className="text-sm text-gray-600">
@@ -405,7 +349,7 @@ export default function UsersList() {
                           <Mail className="h-4 w-4 mr-2 text-gray-400" />
                           {user.email}
                         </div>
-                        <div className="text-sm text-gray-500">ID: {user.id}</div>
+                        <div className="text-sm text-gray-500 hidden">ID: {user.id}</div>
                       </div>
                     </div>
                   </td>
@@ -532,7 +476,6 @@ export default function UsersList() {
         </div>
       )}
 
-      <AddUserModal />
       <EditUserModal />
     </div>
   );
