@@ -37,6 +37,8 @@ export default function ContactModal({
   const [showCommonFields, setShowCommonFields] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const notify = externalShowNotification || showNotification;
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
@@ -62,6 +64,7 @@ export default function ContactModal({
       notify('Please select a rental period.', 'error');
       return;
     }
+    setIsSubmitting(true);
     try {
       const response = await fetch(`/api/${apiSlug}`, {
         method: 'POST',
@@ -82,6 +85,8 @@ export default function ContactModal({
       onClose();
     } catch (err) {
       notify('Failed to send your request. Please try again.', 'error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -257,8 +262,9 @@ export default function ContactModal({
               <button
                 type="submit"
                 className="w-full bg-yellow-600 text-white px-8 py-4 rounded-lg hover:bg-yellow-500 transition-colors font-inter font-medium text-lg"
+                disabled={isSubmitting}
               >
-                SEND MESSAGE
+                {isSubmitting ? "Sending..." : "SEND MESSAGE"}
               </button>
             </div>
           </form>

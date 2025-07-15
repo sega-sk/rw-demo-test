@@ -56,9 +56,9 @@ export default function ProductDetailPage() {
     { immediate: true, cacheKey: 'all-products', cacheTTL: 10 * 60 * 1000 }
   );
 
-  // Fetch memorabilia
+  // Fetch all memorabilia and merchandise for connection filtering
   const { data: memorabiliaData } = useApi(
-    () => apiService.getMemorabilia({ limit: 6 }),
+    () => apiService.getMemorabilia({ limit: 100 }),
     { 
       immediate: true,
       cacheKey: 'product-detail-memorabilia',
@@ -67,9 +67,8 @@ export default function ProductDetailPage() {
     }
   );
 
-  // Fetch merchandise
   const { data: merchandiseData } = useApi(
-    () => apiService.getMerchandise({ limit: 6 }),
+    () => apiService.getMerchandise({ limit: 100 }),
     { 
       immediate: true,
       cacheKey: 'product-detail-merchandise',
@@ -89,9 +88,18 @@ export default function ProductDetailPage() {
         )
       : []) || [];
   
-  // Use API data if available, otherwise use dummy data
-  const memorabiliaItems = memorabiliaData?.rows?.slice(0, 6) || [];
-  const merchandiseItems = merchandiseData?.rows?.slice(0, 6) || [];
+  // Filter memorabilia and merchandise by connection to current product
+  const memorabiliaItems = (memorabiliaData?.rows || []).filter(item =>
+    // Connected if product has memorabilia_ids and this item's id is in that list,
+    // or if this memorabilia's product_ids includes the current product's id
+    (currentProduct?.memorabilia_ids?.includes?.(item.id)) ||
+    (item.product_ids?.includes?.(currentProduct?.id))
+  ).slice(0, 6);
+
+  const merchandiseItems = (merchandiseData?.rows || []).filter(item =>
+    (currentProduct?.merchandise_ids?.includes?.(item.id)) ||
+    (item.product_ids?.includes?.(currentProduct?.id))
+  ).slice(0, 6);
 
   // Ensure we always have a valid images array
   const productImages = currentProduct?.images || [];
@@ -378,7 +386,7 @@ export default function ProductDetailPage() {
               <div className="product-merchandise-wrapper flex items-center justify-between mb-8">
                 <h2 className="text-2xl md:text-3xl font-bebas text-gray-900">Merchandise</h2>
                 <button
-                  onClick={() => navigate('/merchandise')}
+                  onClick={() => navigate(`/${currentProduct.slug}/merchandise`)}
                   className="ml-4 text-blue-600 hover:text-blue-800 font-medium font-inter"
                 >
                   View All →
@@ -434,7 +442,7 @@ export default function ProductDetailPage() {
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl md:text-3xl font-bebas text-gray-900">Movie Memorabilia</h2>
                 <button
-                  onClick={() => navigate('/memorabilia')}
+                  onClick={() => navigate(`/${currentProduct.slug}/memorabilia`)}
                   className="ml-4 text-blue-600 hover:text-blue-800 font-medium font-inter"
                 >
                   View All →

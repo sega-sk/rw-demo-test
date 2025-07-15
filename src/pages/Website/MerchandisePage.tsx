@@ -122,7 +122,7 @@ function MerchandiseCard({ item, onItemClick, onFavoriteToggle, isFavorite }: {
 }
 
 export default function MerchandisePage() {
-  const { productType, slug } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -143,30 +143,31 @@ export default function MerchandisePage() {
     }
   }, [slug, navigate]);
 
-  // Fetch merchandise with filters
+  // Fetch all merchandise for filtering
   const { data: merchandiseData, loading, execute: refetchMerchandise } = useApi(
-    () => searchTerm.trim() 
-      ? apiService.getMerchandise({
-          q: searchTerm,
-          limit: 100
-        })
-      : apiService.getMerchandise({
-          sort: sortBy === 'Featured' ? '-created_at' : sortBy.toLowerCase(),
-          limit: 100
-        }),
+    () => apiService.getMerchandise({ limit: 100 }),
     { 
       immediate: true,
-      cacheKey: searchTerm.trim() 
-        ? `search-merchandise-${searchTerm}` 
-        : `merchandise-${JSON.stringify(selectedFilters)}-${sortBy}`,
-      cacheTTL: searchTerm.trim() ? 30 * 1000 : 2 * 60 * 1000,
-      staleWhileRevalidate: !searchTerm.trim(),
-      skipCache: searchTerm.trim() && searchTerm.length < 3
+      cacheKey: slug ? `merchandise-for-product-${slug}` : `merchandise-all`,
+      cacheTTL: 2 * 60 * 1000,
+      staleWhileRevalidate: true
     }
   );
 
-  // Use API data if available, otherwise use dummy data
-  const allItems = merchandiseData?.rows || [];
+  // If on a product's merchandise page, fetch the product to get its connections
+  const { data: productData } = useApi(
+    () => slug ? apiService.getProduct(slug) : Promise.resolve(null),
+    { immediate: !!slug, cacheKey: `product-for-merchandise-${slug}` }
+  );
+
+  // Filter merchandise by connection if on a product's merchandise page
+  let allItems = merchandiseData?.rows || [];
+  if (slug && productData) {
+    allItems = allItems.filter(item =>
+      (productData.merchandise_ids?.includes?.(item.id)) ||
+      (item.product_ids?.includes?.(productData.id))
+    );
+  }
 
   // Apply client-side filtering for dummy data
   const filteredItems = allItems.filter(item => {

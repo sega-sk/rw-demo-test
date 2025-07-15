@@ -116,7 +116,7 @@ function MemorabiliaCard({ item, onItemClick, onFavoriteToggle, isFavorite }: {
 }
 
 export default function MemorabiliaPage() {
-  const { productType, slug } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -137,30 +137,31 @@ export default function MemorabiliaPage() {
     }
   }, [slug, navigate]);
 
-  // Fetch memorabilia with filters
+  // Fetch all memorabilia for filtering
   const { data: memorabiliaData, loading, execute: refetchMemorabilia } = useApi(
-    () => searchTerm.trim() 
-      ? apiService.getMemorabilia({
-          q: searchTerm,
-          limit: 100
-        })
-      : apiService.getMemorabilia({
-          sort: sortBy === 'Featured' ? '-created_at' : sortBy.toLowerCase(),
-          limit: 100
-        }),
+    () => apiService.getMemorabilia({ limit: 100 }),
     { 
       immediate: true,
-      cacheKey: searchTerm.trim() 
-        ? `search-memorabilia-${searchTerm}` 
-        : `memorabilia-${JSON.stringify(selectedFilters)}-${sortBy}`,
-      cacheTTL: searchTerm.trim() ? 30 * 1000 : 2 * 60 * 1000,
-      staleWhileRevalidate: !searchTerm.trim(),
-      skipCache: searchTerm.trim() && searchTerm.length < 3
+      cacheKey: slug ? `memorabilia-for-product-${slug}` : `memorabilia-all`,
+      cacheTTL: 2 * 60 * 1000,
+      staleWhileRevalidate: true
     }
   );
 
-  // Use API data if available, otherwise use dummy data
-  const allItems = memorabiliaData?.rows || [];
+  // If on a product's memorabilia page, fetch the product to get its connections
+  const { data: productData } = useApi(
+    () => slug ? apiService.getProduct(slug) : Promise.resolve(null),
+    { immediate: !!slug, cacheKey: `product-for-memorabilia-${slug}` }
+  );
+
+  // Filter memorabilia by connection if on a product's memorabilia page
+  let allItems = memorabiliaData?.rows || [];
+  if (slug && productData) {
+    allItems = allItems.filter(item =>
+      (productData.memorabilia_ids?.includes?.(item.id)) ||
+      (item.product_ids?.includes?.(productData.id))
+    );
+  }
 
   // Apply client-side filtering for dummy data
   const filteredItems = allItems.filter(item => {
