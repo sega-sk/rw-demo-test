@@ -1,45 +1,16 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import { useMutation } from '../../hooks/useApi';
 import type { MerchandiseCreate } from '../../services/api';
-=======
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Plus, X } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
->>>>>>> a4f3ad0dad62696efb7b435852ac19404399e6e3
 import Button from '../../components/UI/Button';
 import FormField from '../../components/Forms/FormField';
 import Input from '../../components/Forms/Input';
 import Textarea from '../../components/Forms/Textarea';
 import ImageUploader from '../../components/UI/ImageUploader';
-<<<<<<< HEAD
 
 export default function AddMerchandise() {
   const navigate = useNavigate();
-=======
-import { apiService } from '../../services/api';
-import { useApi, useMutation } from '../../hooks/useApi';
-import { useToastContext } from '../../contexts/ToastContext';
-import type { Merchandise, MerchandiseCreate, MerchandiseUpdate } from '../../services/api';
-
-export default function AddMerchandise() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { isAuthenticated } = useAuth();
-  const { success, error } = useToastContext();
-  
-  // Get edit merchandise ID from URL params
-  const searchParams = new URLSearchParams(location.search);
-  const editMerchandiseId = searchParams.get('edit');
-  const isEditing = !!editMerchandiseId;
-  
-  const [newTag, setNewTag] = useState('');
-  
-  // Form data for add/edit
->>>>>>> a4f3ad0dad62696efb7b435852ac19404399e6e3
   const [formData, setFormData] = useState<MerchandiseCreate>({
     title: '',
     subtitle: '',
@@ -49,66 +20,21 @@ export default function AddMerchandise() {
     keywords: [],
     product_ids: [],
   });
-<<<<<<< HEAD
   const [newTag, setNewTag] = useState('');
   const { mutate: createMerchandise, loading } = useMutation(
     (data: MerchandiseCreate) => apiService.createMerchandise(data)
   );
 
-=======
-
-  // Fetch merchandise data for editing
-  const { data: editMerchandise, loading: loadingMerchandise } = useApi(
-    () => editMerchandiseId ? apiService.getMerchandiseItem(editMerchandiseId) : Promise.resolve(null),
-    { 
-      immediate: !!editMerchandiseId,
-      cacheKey: `edit-merchandise-${editMerchandiseId}`,
-      cacheTTL: 2 * 60 * 1000,
-      staleWhileRevalidate: true
-    }
-  );
-
-  // Load merchandise data when editing
-  useEffect(() => {
-    if (isEditing && editMerchandise) {
-      setFormData({
-        title: editMerchandise.title || '',
-        subtitle: editMerchandise.subtitle || '',
-        description: editMerchandise.description || '',
-        price: editMerchandise.price || '',
-        photos: editMerchandise.photos || [],
-        keywords: editMerchandise.keywords || [],
-        product_ids: [],
-      });
-    }
-  }, [isEditing, editMerchandise]);
-
-  const { mutate: createMerchandise, loading: creating } = useMutation(
-    (data: MerchandiseCreate) => apiService.createMerchandise(data)
-  );
-
-  const { mutate: updateMerchandise, loading: updating } = useMutation(
-    ({ id, data }: { id: string; data: MerchandiseUpdate }) => apiService.updateMerchandise(id, data)
-  );
-
->>>>>>> a4f3ad0dad62696efb7b435852ac19404399e6e3
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleAddTag = () => {
-<<<<<<< HEAD
     if (newTag.trim() && !formData.keywords?.includes(newTag.trim())) {
       setFormData(prev => ({
         ...prev,
         keywords: [...(prev.keywords || []), newTag.trim()]
-=======
-    if (newTag.trim() && !formData.keywords.includes(newTag.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        keywords: [...prev.keywords, newTag.trim()]
->>>>>>> a4f3ad0dad62696efb7b435852ac19404399e6e3
       }));
       setNewTag('');
     }
@@ -117,33 +43,16 @@ export default function AddMerchandise() {
   const handleRemoveTag = (tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-<<<<<<< HEAD
       keywords: (prev.keywords || []).filter(tag => tag !== tagToRemove)
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-=======
-      keywords: prev.keywords.filter(tag => tag !== tagToRemove)
-    }));
-  };
-
-  const handleSaveItem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isAuthenticated) {
-      alert('Please login to save merchandise');
-      navigate('/admin/login');
-      return;
-    }
-    
->>>>>>> a4f3ad0dad62696efb7b435852ac19404399e6e3
     if (!formData.title.trim() || !formData.price.toString().trim()) {
       alert('Title and price are required.');
       return;
     }
-<<<<<<< HEAD
     try {
       await createMerchandise(formData);
       alert('Merchandise created successfully!');
@@ -228,7 +137,114 @@ export default function AddMerchandise() {
 }
 
 // This file is already a standalone page for adding merchandise.
-=======
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Plus, X } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import Button from '../../components/UI/Button';
+import FormField from '../../components/Forms/FormField';
+import Input from '../../components/Forms/Input';
+import Textarea from '../../components/Forms/Textarea';
+import ImageUploader from '../../components/UI/ImageUploader';
+import { apiService } from '../../services/api';
+import { useApi, useMutation } from '../../hooks/useApi';
+import { useToastContext } from '../../contexts/ToastContext';
+import type { Merchandise, MerchandiseCreate, MerchandiseUpdate } from '../../services/api';
+
+export default function AddMerchandise() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const { success, error } = useToastContext();
+  
+  // Get edit merchandise ID from URL params
+  const searchParams = new URLSearchParams(location.search);
+  const editMerchandiseId = searchParams.get('edit');
+  const isEditing = !!editMerchandiseId;
+  
+  const [newTag, setNewTag] = useState('');
+  
+  // Form data for add/edit
+  const [formData, setFormData] = useState<MerchandiseCreate>({
+    title: '',
+    subtitle: '',
+    description: '',
+    price: '',
+    photos: [],
+    keywords: [],
+    product_ids: [],
+  });
+
+  // Fetch merchandise data for editing
+  const { data: editMerchandise, loading: loadingMerchandise } = useApi(
+    () => editMerchandiseId ? apiService.getMerchandiseItem(editMerchandiseId) : Promise.resolve(null),
+    { 
+      immediate: !!editMerchandiseId,
+      cacheKey: `edit-merchandise-${editMerchandiseId}`,
+      cacheTTL: 2 * 60 * 1000,
+      staleWhileRevalidate: true
+    }
+  );
+
+  // Load merchandise data when editing
+  useEffect(() => {
+    if (isEditing && editMerchandise) {
+      setFormData({
+        title: editMerchandise.title || '',
+        subtitle: editMerchandise.subtitle || '',
+        description: editMerchandise.description || '',
+        price: editMerchandise.price || '',
+        photos: editMerchandise.photos || [],
+        keywords: editMerchandise.keywords || [],
+        product_ids: [],
+      });
+    }
+  }, [isEditing, editMerchandise]);
+
+  const { mutate: createMerchandise, loading: creating } = useMutation(
+    (data: MerchandiseCreate) => apiService.createMerchandise(data)
+  );
+
+  const { mutate: updateMerchandise, loading: updating } = useMutation(
+    ({ id, data }: { id: string; data: MerchandiseUpdate }) => apiService.updateMerchandise(id, data)
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddTag = () => {
+    if (newTag.trim() && !formData.keywords.includes(newTag.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        keywords: [...prev.keywords, newTag.trim()]
+      }));
+      setNewTag('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      keywords: prev.keywords.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const handleSaveItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isAuthenticated) {
+      alert('Please login to save merchandise');
+      navigate('/admin/login');
+      return;
+    }
+    
+    if (!formData.title.trim() || !formData.price.toString().trim()) {
+      alert('Title and price are required.');
+      return;
+    }
     
     try {
       if (isEditing && editMerchandiseId) {
@@ -384,4 +400,3 @@ export default function AddMerchandise() {
     </div>
   );
 }
->>>>>>> a4f3ad0dad62696efb7b435852ac19404399e6e3

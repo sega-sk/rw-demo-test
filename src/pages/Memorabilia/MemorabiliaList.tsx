@@ -184,7 +184,6 @@ export default function MemorabiliaList() {
         
         <div className="flex items-center justify-between mb-4">
           <Button icon={Plus} onClick={() => navigate('/admin/memorabilia/add')} className="btn-hover">
-          <Button icon={Plus} onClick={() => navigate('/admin/memorabilia/add')} className="btn-hover">
             Add New
           </Button>
           

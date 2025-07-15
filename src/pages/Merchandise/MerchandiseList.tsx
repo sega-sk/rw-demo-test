@@ -185,7 +185,6 @@ export default function MerchandiseList() {
         
         <div className="flex items-center justify-between mb-4">
           <Button icon={Plus} onClick={() => navigate('/admin/merchandise/add')} className="btn-hover">
-          <Button icon={Plus} onClick={() => navigate('/admin/merchandise/add')} className="btn-hover">
             Add New
           </Button>
           
