@@ -46,7 +46,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     };
 
+    // Set up logout callback to sync AuthContext with AuthService
+    const handleLogout = () => {
+      console.log('AuthService logout callback triggered');
+      setUser(null);
+      setIsLoading(false);
+    };
+
+    authService.setOnLogout(handleLogout);
+
     checkAuth();
+
+    // Cleanup function to remove callback
+    return () => {
+      authService.setOnLogout(() => {});
+    };
   }, []);
 
   const login = async (email: string, password: string) => {

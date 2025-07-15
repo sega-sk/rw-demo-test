@@ -21,10 +21,15 @@ class AuthService {
   private readonly API_BASE_URL = 'https://reel-wheel-api-x92jj.ondigitalocean.app';
   private accessToken: string | null = null;
   private refreshToken: string | null = null;
+  private onLogoutCallback: (() => void) | null = null;
 
   constructor() {
     // Load tokens from localStorage on initialization
     this.loadTokensFromStorage();
+  }
+
+  setOnLogout(callback: () => void) {
+    this.onLogoutCallback = callback;
   }
 
   private loadTokensFromStorage() {
@@ -104,12 +109,20 @@ class AuthService {
     } catch (error) {
       console.error('Token refresh error:', error);
       this.clearTokensFromStorage();
+      // Notify AuthContext about logout
+      if (this.onLogoutCallback) {
+        this.onLogoutCallback();
+      }
       throw error;
     }
   }
 
   logout() {
     this.clearTokensFromStorage();
+    // Notify AuthContext about logout
+    if (this.onLogoutCallback) {
+      this.onLogoutCallback();
+    }
   }
 
   getAccessToken(): string | null {

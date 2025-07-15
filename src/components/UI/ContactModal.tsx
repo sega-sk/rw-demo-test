@@ -22,7 +22,7 @@ export default function ContactModal({
   showNotification: externalShowNotification,
 }: ContactModalProps) {
   const { notification, showNotification, clearNotification } = useNotification();
-  const notify = externalShowNotification || showNotification;
+
   const [formData, setFormData] = useState({
     mainOption: '',
     rentPeriod: '',
@@ -35,6 +35,7 @@ export default function ContactModal({
   });
 
   const [showCommonFields, setShowCommonFields] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -11,7 +11,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ariaLabel?: string;
 }
 
-export default function Button({
+const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'md',
   icon: Icon,
@@ -22,7 +22,7 @@ export default function Button({
   disabled,
   ariaLabel,
   ...props
-}: ButtonProps) {
+}) => {
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
@@ -66,4 +66,6 @@ export default function Button({
       )}
     </button>
   );
-}
+};
+
+export default Button;

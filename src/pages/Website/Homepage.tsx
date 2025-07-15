@@ -5,6 +5,8 @@ import { apiService } from '../../services/api';
 import { useApi } from '../../hooks/useApi';
 import ContactModal from '../../components/UI/ContactModal';
 import SearchModal from '../../components/Website/SearchModal';
+import { leadsService } from '../../services/leads';
+import type { LeadCreate } from '../../services/leads';
 import WebsiteHeader from '../../components/Website/WebsiteHeader';
 import WebsiteFooter from '../../components/Website/WebsiteFooter';
 import SEOHead from '../../components/UI/SEOHead';
@@ -480,9 +482,10 @@ export default function Homepage() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-yellow-600 text-white px-8 py-4 rounded-lg hover:bg-yellow-500 transition-colors font-inter font-medium text-lg"
+                  disabled={isSubmittingContact}
+                  className="w-full bg-yellow-600 text-white px-8 py-4 rounded-lg hover:bg-yellow-500 transition-colors font-inter font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  SEND MESSAGE
+                  {isSubmittingContact ? 'SENDING...' : 'SEND MESSAGE'}
                 </button>
               </form>
             </div>

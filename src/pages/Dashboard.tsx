@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Package, Star, ShoppingBag, TrendingUp, Users, DollarSign } from 'lucide-react';
+import { Package, Star, ShoppingBag, TrendingUp, Users, DollarSign, MessageSquare } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
+import { leadsService } from '../services/leads';
 import { useApi } from '../hooks/useApi';
 import OptimizedImage from '../components/UI/OptimizedImage';
 import { formatPrice } from '../utils/priceUtils';
 
 export default function Dashboard() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalMemorabilia: 0,
     totalMerchandise: 0,
+    totalLeads: 0,
     totalValue: 0,
   });
 
@@ -48,6 +50,16 @@ export default function Dashboard() {
     }
   );
 
+  // Fetch leads data (admin only)
+  const { data: leadsData, loading: leadsLoading } = useApi(
+    () => isAuthenticated && user?.role === 'admin' ? leadsService.getLeads({ limit: 5 }) : Promise.resolve({ rows: [], total: 0, offset: 0 }),
+    { 
+      immediate: isAuthenticated && user?.role === 'admin',
+      cacheKey: 'dashboard-leads',
+      cacheTTL: 1 * 60 * 1000,
+      staleWhileRevalidate: true
+    }
+  );
   useEffect(() => {
     if (!isAuthenticated) return;
     
@@ -55,6 +67,7 @@ export default function Dashboard() {
     const products = productsData?.rows || [];
     const memorabilia = memorabiliaData?.rows || [];
     const merchandise = merchandiseData?.rows || [];
+    const leads = leadsData?.rows || [];
     
     // Calculate total value from products
     const totalValue = products.reduce((sum, product) => {
@@ -66,6 +79,7 @@ export default function Dashboard() {
       totalProducts: productsData?.total || 0,
       totalMemorabilia: memorabiliaData?.total || 0,
       totalMerchandise: merchandiseData?.total || 0,
+      totalLeads: leadsData?.total || 0,
       totalValue,
     });
 
@@ -83,7 +97,7 @@ export default function Dashboard() {
         product_types: product.product_types
       }))
     );
-  }, [productsData, memorabiliaData, merchandiseData, isAuthenticated]);
+  }, [productsData, memorabiliaData, merchandiseData, leadsData, isAuthenticated]);
 
   const handleViewProduct = (product: any) => {
     const type = product.product_types[0] || 'vehicle';
@@ -112,6 +126,14 @@ export default function Dashboard() {
       changeType: 'negative', 
       icon: ShoppingBag 
     },
+    ...(user?.role === 'admin' ? [{ 
+      name: 'Total Leads', 
+      value: stats.totalLeads.toString(), 
+      change: '+8.2%', 
+      changeType: 'positive', 
+      icon: MessageSquare 
+    }] : []),
+    /*
     { 
       name: 'Total Value', 
       value: formatPrice(stats.totalValue), 
@@ -119,9 +141,10 @@ export default function Dashboard() {
       changeType: 'positive', 
       icon: DollarSign 
     },
+    */
   ];
 
-  const isLoading = productsLoading || memorabiliaLoading || merchandiseLoading;
+  const isLoading = productsLoading || memorabiliaLoading || merchandiseLoading || (user?.role === 'admin' && leadsLoading);
 
   if (isLoading) {
     return (

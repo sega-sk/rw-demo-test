@@ -3,6 +3,8 @@ import { Outlet } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import ToastContainer from '../UI/ToastContainer';
+import { useToast } from '../../hooks/useToast';
 import { Menu } from 'lucide-react';
 
 interface LayoutProps {
@@ -13,6 +15,7 @@ interface LayoutProps {
 
 export default function Layout({ title, breadcrumb, children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { toasts, removeToast } = useToast();
 
   return (
     <>
@@ -79,6 +82,9 @@ export default function Layout({ title, breadcrumb, children }: LayoutProps) {
         </footer>
       </div>
     </div>
+    
+    {/* Toast Container */}
+    <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );
 }

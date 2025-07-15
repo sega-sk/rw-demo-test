@@ -39,7 +39,7 @@ export default function ProductDetailPage() {
   // Fetch related products
   const { data: relatedProductsData } = useApi(
     () => apiService.getProducts({ 
-      product_types: product?.product_types || ['vehicle'],
+      //product_types: product?.product_types || ['vehicle'],
       limit: 4 
     }),
     { 
@@ -370,7 +370,7 @@ export default function ProductDetailPage() {
         )}
 
         {/* Memorabilia and Merchandise Row Layout */}
-        <div className="memorabilia-merchandise-row mt-16">
+        <div className="memorabilia-merchandise-row mt-16 w-full">
 
           {/* Merchandise Section */}
           {merchandiseItems.length > 0 && (
@@ -379,7 +379,7 @@ export default function ProductDetailPage() {
                 <h2 className="text-2xl md:text-3xl font-bebas text-gray-900">Merchandise</h2>
                 <button
                   onClick={() => navigate('/merchandise')}
-                  className="text-blue-600 hover:text-blue-800 font-medium font-inter"
+                  className="ml-4 text-blue-600 hover:text-blue-800 font-medium font-inter"
                 >
                   View All →
                 </button>
@@ -435,7 +435,7 @@ export default function ProductDetailPage() {
                 <h2 className="text-2xl md:text-3xl font-bebas text-gray-900">Movie Memorabilia</h2>
                 <button
                   onClick={() => navigate('/memorabilia')}
-                  className="text-blue-600 hover:text-blue-800 font-medium font-inter"
+                  className="ml-4 text-blue-600 hover:text-blue-800 font-medium font-inter"
                 >
                   View All →
                 </button>

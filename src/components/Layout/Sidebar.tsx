@@ -9,7 +9,8 @@ import {
   ShoppingBag, 
   List,
   User,
-  Users
+  Users,
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import OptimizedImage from '../UI/OptimizedImage';
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Add Product', href: '/admin/products/add', icon: Rocket },
   { name: 'Memorabilia', href: '/admin/memorabilia', icon: Star },
   { name: 'Merchandise', href: '/admin/merchandise', icon: ShoppingBag },
+  { name: 'Leads', href: '/admin/leads', icon: MessageSquare, adminOnly: true },
   { name: 'Profile', href: '/admin/profile', icon: User },
   { name: 'Users', href: '/admin/users', icon: Users, adminOnly: true },
 ];

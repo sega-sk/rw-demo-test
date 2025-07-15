@@ -1,13 +1,14 @@
 /* Additional CSS for custom styling */
 /* SeGa edition */
 
-textarea[name="comments"] {
-  color: #000 !important;
-}
-
+<<<<<<< HEAD
 body .group-hover\:scale-105,
 body .hover\:scale-105 {
   transform: none !important;
+=======
+textarea[name="comments"] {
+  color: #000 !important;
+>>>>>>> a4f3ad0dad62696efb7b435852ac19404399e6e3
 }
 
 body img[src*="/logo-color.webp"] {

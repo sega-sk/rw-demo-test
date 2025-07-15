@@ -6,7 +6,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { value: string; label: string }[];
 }
 
-export default function Select({ error, options, className = '', ...props }: SelectProps) {
+function Select({ error, options, className = '', ...props }: SelectProps) {
   const baseClasses = 'block w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-0 transition-colors appearance-none bg-white';
   const errorClasses = error 
     ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
@@ -28,3 +28,5 @@ export default function Select({ error, options, className = '', ...props }: Sel
     </div>
   );
 }
+
+export default Select;

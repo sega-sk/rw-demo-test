@@ -1,10 +1,6 @@
 /* Additional CSS for custom styling */
 /* SeGa edition */
 
-textarea[name="comments"] {
-  color: #000 !important;
-}
-
 body .group-hover\:scale-105,
 body .hover\:scale-105 {
   transform: none !important;
@@ -323,10 +319,6 @@ body .product-detail-main-slider {
   display: none !important;
 }
 
-.fixed.bg-black.bg-opacity-25,
-.fixed.bg-black.bg-opacity-50 {
-  z-index: initial !important;
-}
 .fixed.bg-black {
   overflow: auto;
   position: fixed;
@@ -350,12 +342,6 @@ body .product-detail-main-slider {
 
 .fixed.bg-black .max-w-4xl {
     max-width: 88vw;
-}
-
-@media(max-width: 1023px) {
-  .product-memorabilia-wrapper {
-    margin-top: 4rem;
-  }
 }
 
 .product-memorabilia-wrapper .w-full.h-48 {
@@ -665,9 +651,6 @@ body .homepage-about-section > .bg-black {
 }
 body .homepage-about-section img.max-w-md.m-30 {
   max-width: max-content;
-}
-.homepage-about-section button:not(:hover) {
-  background: linear-gradient(rgba(0, 0, 0, 0) 44.11%, rgba(255, 220, 154, 0.4) 89.29%), rgb(191, 158, 71) !important;
 }
 
 .search-modal-overlay [class*="bg-"] {background-color:#111 !important;}
@@ -1383,10 +1366,6 @@ footer a:hover {
 
 .homepage-contact-form .text-gray-400 {
   color: #9ca3af !important;
-}
-
-.homepage-contact-form form button {
-  border-radius: 27px;
 }
 
 /* Ensure proper background colors */

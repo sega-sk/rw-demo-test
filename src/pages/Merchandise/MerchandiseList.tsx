@@ -10,6 +10,7 @@ import Textarea from '../../components/Forms/Textarea';
 import ImageUploader from '../../components/UI/ImageUploader';
 import { apiService } from '../../services/api';
 import { useApi, useMutation } from '../../hooks/useApi';
+import { useToastContext } from '../../contexts/ToastContext';
 import type { Merchandise, MerchandiseCreate, MerchandiseUpdate } from '../../services/api';
 import Tooltip from '../../components/UI/Tooltip';
 import OptimizedImage from '../../components/UI/OptimizedImage';
@@ -88,6 +89,7 @@ export default function MerchandiseList() {
     if (window.confirm('Are you sure you want to delete this merchandise item?')) {
       try {
         await deleteMerchandise(itemId);
+        success('Merchandise Deleted', 'Merchandise item has been deleted successfully!');
         refetchMerchandise();
       } catch (error) {
         console.error('Failed to delete merchandise:', error);
@@ -183,6 +185,7 @@ export default function MerchandiseList() {
         
         <div className="flex items-center justify-between mb-4">
           <Button icon={Plus} onClick={() => navigate('/admin/merchandise/add')} className="btn-hover">
+          <Button icon={Plus} onClick={() => navigate('/admin/merchandise/add')} className="btn-hover">
             Add New
           </Button>
           
@@ -235,7 +238,7 @@ export default function MerchandiseList() {
                     Price
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tags
+                    Keywords
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Created

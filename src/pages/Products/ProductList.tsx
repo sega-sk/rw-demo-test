@@ -6,6 +6,7 @@ import Button from '../../components/UI/Button';
 import Badge from '../../components/UI/Badge';
 import { apiService } from '../../services/api';
 import { useApi, useMutation } from '../../hooks/useApi';
+import { useToastContext } from '../../contexts/ToastContext';
 import OptimizedImage from '../../components/UI/OptimizedImage';
 import { formatPrice } from '../../utils/priceUtils';
 
@@ -21,6 +22,7 @@ const statusColors = {
 export default function ProductList() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { success, error } = useToastContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,10 +100,11 @@ export default function ProductList() {
     if (window.confirm(`Are you sure you want to delete "${product.name}"?`)) {
       try {
         await deleteProduct(product.id);
+        success('Product Deleted', 'Product has been deleted successfully!');
         refetchProducts(); // Refresh the list after deletion
       } catch (error) {
         console.error('Failed to delete product:', error);
-        alert('Failed to delete product. Please try again.');
+        error('Delete Failed', 'Failed to delete product. Please try again.');
       }
     }
   };

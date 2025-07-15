@@ -13,6 +13,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { FavoritesProvider } from './contexts/FavoritesContext';
+import { ToastProvider } from './contexts/ToastContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import LoginPage from './components/Auth/LoginPage';
 import Layout from './components/Layout/Layout'; 
@@ -20,7 +21,10 @@ import Dashboard from './pages/Dashboard';
 import AddProduct from './pages/Products/AddProduct';
 import ProductList from './pages/Products/ProductList';
 import MemorabiliaList from './pages/Memorabilia/MemorabiliaList';
+import AddMemorabilia from './pages/Memorabilia/AddMemorabilia';
 import MerchandiseList from './pages/Merchandise/MerchandiseList';
+import AddMerchandise from './pages/Merchandise/AddMerchandise';
+import LeadsList from './pages/Leads/LeadsList';
 import ProfilePage from './pages/Profile/ProfilePage';
 import UsersList from './pages/Users/UsersList';
 import AddMemorabilia from './pages/Memorabilia/AddMemorabilia';
@@ -40,9 +44,10 @@ import NotFoundPage from './pages/NotFoundPage';
 function App() {
   return (
     <AuthProvider>
-      <FavoritesProvider>
-        <Router>
-          <Routes>
+      <ToastProvider>
+        <FavoritesProvider>
+          <Router>
+            <Routes>
             {/* Main Website Routes */}
             <Route path="/" element={<Homepage />} />
             <Route path="/catalog" element={<CatalogPage />} />
@@ -119,9 +124,27 @@ function App() {
               </ProtectedRoute>
             } />
             
+            <Route path="/admin/memorabilia/add" element={
+              <ProtectedRoute>
+                <Layout title="Add Memorabilia" breadcrumb={['Dashboard', 'Memorabilia', 'Add']}><AddMemorabilia /></Layout>
+              </ProtectedRoute>
+            } />
+            
             <Route path="/admin/merchandise" element={
               <ProtectedRoute>
                 <Layout title="Merchandise" breadcrumb={['Dashboard', 'Merchandise']}><MerchandiseList /></Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/merchandise/add" element={
+              <ProtectedRoute>
+                <Layout title="Add Merchandise" breadcrumb={['Dashboard', 'Merchandise', 'Add']}><AddMerchandise /></Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/leads" element={
+              <ProtectedRoute>
+                <Layout title="Leads Management" breadcrumb={['Dashboard', 'Leads']}><LeadsList /></Layout>
               </ProtectedRoute>
             } />
             
@@ -139,9 +162,10 @@ function App() {
             
             {/* Catch-all route for 404 */}
             <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Router>
-      </FavoritesProvider>
+            </Routes>
+          </Router>
+        </FavoritesProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 }

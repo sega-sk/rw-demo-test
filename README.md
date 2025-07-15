@@ -88,6 +88,39 @@ npm run build
 npm run preview
 ```
 
+## 🚀 Deployment
+
+### Vercel Deployment
+
+1. **Connect to Vercel:**
+   ```bash
+   # Install Vercel CLI (optional)
+   npm i -g vercel
+   
+   # Deploy
+   vercel
+   ```
+
+2. **Or deploy via Vercel Dashboard:**
+   - Connect your GitHub repository
+   - Vercel will automatically detect the Vite configuration
+   - Build command: `npm run build`
+   - Output directory: `dist`
+   - Install command: `npm install`
+
+3. **Environment Variables (if needed):**
+   - Add any required environment variables in Vercel dashboard
+   - Variables starting with `VITE_` will be available in the client
+
+### Build Optimization
+
+The project is optimized for production with:
+- Code splitting and tree shaking
+- Asset optimization and compression
+- Proper caching headers
+- Security headers
+- SEO optimization
+
 ## 📄 License
 
 © 2025 DealerTower - All Rights Reserved

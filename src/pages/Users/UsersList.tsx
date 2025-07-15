@@ -10,6 +10,7 @@ import Input from '../../components/Forms/Input';
 import Select from '../../components/Forms/Select';
 import { apiService } from '../../services/api';
 import { useApi, useMutation } from '../../hooks/useApi';
+import { useToastContext } from '../../contexts/ToastContext';
 import type { User as UserType, UserCreate, UserUpdate } from '../../services/api';
 
 const roleOptions = [
@@ -104,18 +105,18 @@ export default function UsersList() {
 
   const handleDelete = async (userId: string) => {
     if (userId === currentUser?.id) {
-      alert('You cannot delete your own account.');
+      error('Cannot Delete', 'You cannot delete your own account.');
       return;
     }
 
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       try {
         await deleteUser(userId);
-        alert('User deleted successfully!');
+        success('User Deleted', 'User has been deleted successfully!');
         refetchUsers();
       } catch (error) {
         console.error('Failed to delete user:', error);
-        alert('Failed to delete user. Please try again.');
+        error('Delete Failed', 'Failed to delete user. Please try again.');
       }
     }
   };
@@ -142,16 +143,16 @@ export default function UsersList() {
         }
         
         await updateUser({ id: selectedUser.id, data: updateData });
-        alert('User updated successfully!');
+        success('User Updated', 'User has been updated successfully!');
       } else {
         // Create new user
         if (!formData.password.trim()) {
-          alert('Password is required for new users.');
+          error('Validation Error', 'Password is required for new users.');
           return;
         }
         
         await createUser(formData);
-        alert('User created successfully!');
+        success('User Created', 'User has been created successfully!');
       }
       
       // Reset form and close modals
@@ -168,10 +169,10 @@ export default function UsersList() {
     } catch (error) {
       console.error('Failed to save user:', error);
       if (error instanceof Error && error.message.includes('Authentication')) {
-        alert('Authentication expired. Please login again.');
+        error('Authentication Error', 'Your session has expired. Please login again.');
         navigate('/admin/login');
       } else {
-        alert('Failed to save user. Please try again.');
+        error('Save Failed', 'Failed to save user. Please try again.');
       }
     }
   };

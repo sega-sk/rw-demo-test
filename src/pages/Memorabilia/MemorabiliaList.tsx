@@ -10,6 +10,7 @@ import Textarea from '../../components/Forms/Textarea';
 import ImageUploader from '../../components/UI/ImageUploader';
 import { apiService } from '../../services/api';
 import { useApi, useMutation } from '../../hooks/useApi';
+import { useToastContext } from '../../contexts/ToastContext';
 import type { Memorabilia, MemorabiliaCreate, MemorabiliaUpdate } from '../../services/api';
 import Tooltip from '../../components/UI/Tooltip';
 import OptimizedImage from '../../components/UI/OptimizedImage';
@@ -87,6 +88,7 @@ export default function MemorabiliaList() {
     if (window.confirm('Are you sure you want to delete this memorabilia item?')) {
       try {
         await deleteMemorabilia(itemId);
+        success('Memorabilia Deleted', 'Memorabilia item has been deleted successfully!');
         refetchMemorabilia();
       } catch (error) {
         console.error('Failed to delete memorabilia:', error);
@@ -182,6 +184,7 @@ export default function MemorabiliaList() {
         
         <div className="flex items-center justify-between mb-4">
           <Button icon={Plus} onClick={() => navigate('/admin/memorabilia/add')} className="btn-hover">
+          <Button icon={Plus} onClick={() => navigate('/admin/memorabilia/add')} className="btn-hover">
             Add New
           </Button>
           
@@ -231,7 +234,7 @@ export default function MemorabiliaList() {
                     Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tags
+                    Keywords
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Created

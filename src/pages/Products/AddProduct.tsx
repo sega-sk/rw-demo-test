@@ -10,6 +10,7 @@ import Select from '../../components/Forms/Select';
 import ImageUploader from '../../components/UI/ImageUploader';
 import { apiService } from '../../services/api';
 import { useApi, useMutation } from '../../hooks/useApi';
+import { useToastContext } from '../../contexts/ToastContext';
 import type { ProductCreate, RentalPeriod } from '../../services/api';
 import OptimizedImage from '../../components/UI/OptimizedImage';
 
@@ -36,6 +37,7 @@ export default function AddProduct() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
+  const { success, error } = useToastContext();
   
   // Get edit product ID from URL params
   const searchParams = new URLSearchParams(location.search);
@@ -221,34 +223,34 @@ export default function AddProduct() {
         ...formData,
         background_image_url: backgroundImages[0] || null,
         // Convert string prices to numbers or strings as expected by API
-        sale_price: formData.sale_price ? formData.sale_price.toString() : null,
-        retail_price: formData.retail_price ? formData.retail_price.toString() : null,
-        rental_price_hourly: formData.rental_price_hourly ? formData.rental_price_hourly.toString() : null,
-        rental_price_daily: formData.rental_price_daily ? formData.rental_price_daily.toString() : null,
-        rental_price_weekly: formData.rental_price_weekly ? formData.rental_price_weekly.toString() : null,
-        rental_price_monthly: formData.rental_price_monthly ? formData.rental_price_monthly.toString() : null,
-        rental_price_yearly: formData.rental_price_yearly ? formData.rental_price_yearly.toString() : null,
+        sale_price: formData.sale_price ? parseFloat(formData.sale_price.toString()) || null : null,
+        retail_price: formData.retail_price ? parseFloat(formData.retail_price.toString()) || null : null,
+        rental_price_hourly: formData.rental_price_hourly ? parseFloat(formData.rental_price_hourly.toString()) || null : null,
+        rental_price_daily: formData.rental_price_daily ? parseFloat(formData.rental_price_daily.toString()) || null : null,
+        rental_price_weekly: formData.rental_price_weekly ? parseFloat(formData.rental_price_weekly.toString()) || null : null,
+        rental_price_monthly: formData.rental_price_monthly ? parseFloat(formData.rental_price_monthly.toString()) || null : null,
+        rental_price_yearly: formData.rental_price_yearly ? parseFloat(formData.rental_price_yearly.toString()) || null : null,
         video_url: videoUrl.trim() || null,
       };
 
       if (isEditing && editProductId) {
         // Update existing product
         const result = await updateProduct({ id: editProductId, data: cleanedData });
-        alert('Product updated successfully!');
+        success('Product Updated', 'Product has been updated successfully!');
       } else {
         // Create new product
         const result = await createProduct(cleanedData);
-        alert('Product created successfully!');
+        success('Product Created', 'Product has been created successfully!');
       }
       
       navigate('/admin/product-list');
     } catch (error) {
       console.error('Failed to save product:', error);
       if (error instanceof Error && error.message.includes('Authentication')) {
-        alert('Authentication expired. Please login again.');
+        error('Authentication Error', 'Your session has expired. Please login again.');
         navigate('/admin/login');
       } else {
-        alert('Failed to save product. Please try again.');
+        error('Save Failed', `Failed to save product: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
       }
     }
   };
