@@ -355,7 +355,8 @@ export default function AddProduct() {
 
                 {/* Keywords */}
                 <FormField label="Search Keywords">
-                  <div className="space-y-2">
+                  {/* Wrap multiple children in a div */}
+                  <div>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {formData.keywords.map((keyword, index) => (
                         <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
@@ -392,7 +393,7 @@ export default function AddProduct() {
 
                 {/* Product Types */}
                 <FormField label="Product Types">
-                  <div className="space-y-2">
+                  <div>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {formData.product_types.map((type, index) => (
                         <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
@@ -421,7 +422,7 @@ export default function AddProduct() {
 
                 {/* Movies */}
                 <FormField label="Movies">
-                  <div className="space-y-2">
+                  <div>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {formData.movies.map((movie, index) => (
                         <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800">
@@ -458,7 +459,7 @@ export default function AddProduct() {
 
                 {/* Genres */}
                 <FormField label="Genres">
-                  <div className="space-y-2">
+                  <div>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {formData.genres.map((genre, index) => (
                         <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
@@ -533,7 +534,7 @@ export default function AddProduct() {
 
               {/* Rental Periods */}
               <FormField label="Available Rental Periods">
-                <div className="space-y-2">
+                <div>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {formData.available_rental_periods.map((period, index) => (
                       <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">

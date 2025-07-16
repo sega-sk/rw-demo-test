@@ -59,6 +59,11 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Only cache GET requests
+  if (request.method !== 'GET') {
+    return; // Let non-GET requests pass through
+  }
+
   // Handle API requests with stale-while-revalidate
   if (url.hostname === 'reel-wheel-api-x92jj.ondigitalocean.app') {
     event.respondWith(staleWhileRevalidate(request, API_CACHE_NAME));
@@ -84,6 +89,7 @@ self.addEventListener('fetch', (event) => {
 
 // Cache-first strategy for static assets
 async function cacheFirst(request, cacheName) {
+  if (request.method !== 'GET') return fetch(request);
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
   
@@ -105,6 +111,7 @@ async function cacheFirst(request, cacheName) {
 
 // Network-first strategy for navigation
 async function networkFirst(request, cacheName) {
+  if (request.method !== 'GET') return fetch(request);
   const cache = await caches.open(cacheName);
   
   try {
@@ -133,6 +140,7 @@ async function networkFirst(request, cacheName) {
 
 // Stale-while-revalidate strategy for API requests
 async function staleWhileRevalidate(request, cacheName) {
+  if (request.method !== 'GET') return fetch(request);
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
   

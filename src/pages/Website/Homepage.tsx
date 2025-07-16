@@ -502,9 +502,10 @@ export default function Homepage() {
                 </div>
                 <button
                   type="submit"
+                  disabled={isSubmittingContact ? true : false}
                   className="w-full bg-yellow-600 text-white px-8 py-4 rounded-lg hover:bg-yellow-500 transition-colors font-inter font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  SEND MESSAGE
+                  {isSubmittingContact ? 'SENDING...' : 'SEND MESSAGE'}
                 </button>
               </form>
             </div>
