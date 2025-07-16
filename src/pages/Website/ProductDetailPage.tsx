@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Heart, ArrowLeft, Expand, X, Grid } from 'lucide-react';
 import { formatPriceWithSale } from '../../utils/priceUtils';
 import { apiService } from '../../services/api';
@@ -16,6 +16,7 @@ import { useNotification } from '../../hooks/useNotification';
 
 export default function ProductDetailPage() {
   const { productType, slug } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -125,6 +126,7 @@ export default function ProductDetailPage() {
 
   const handleRelatedProductClick = (relatedProduct: any) => {
     const type = relatedProduct.product_types[0] || 'vehicle';
+    // Use navigate with replace: false to push to history stack
     navigate(`/catalog/${type}/${relatedProduct.slug}`);
   };
 
