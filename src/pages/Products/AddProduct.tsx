@@ -214,18 +214,18 @@ export default function AddProduct() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isAuthenticated) {
       alert('Please login to add products');
       navigate('/admin/login');
       return;
     }
-    
+
     if (!formData.title.trim()) {
       alert('Product title is required.');
       return;
     }
-    
+
     try {
       // Prepare data for API
       const cleanedData: ProductCreate = {
@@ -242,17 +242,22 @@ export default function AddProduct() {
         is_trending_model: !!formData.is_trending_model,
         is_on_homepage_slider: !!formData.is_on_homepage_slider,
         is_background_image_activated: !!formData.is_background_image_activated,
-        memorabilia_ids: Array.isArray(formData.memorabilia_ids) ? formData.memorabilia_ids.map(String) : [],
-        merchandise_ids: Array.isArray(formData.merchandise_ids) ? formData.merchandise_ids.map(String) : [],
-        product_ids: Array.isArray(formData.product_ids) ? formData.product_ids.map(String) : [],
-        images: Array.isArray(formData.images) ? formData.images : [],
-        product_types: Array.isArray(formData.product_types) ? formData.product_types : [],
-        movies: Array.isArray(formData.movies) ? formData.movies : [],
-        genres: Array.isArray(formData.genres) ? formData.genres : [],
-        keywords: Array.isArray(formData.keywords) ? formData.keywords : [],
-        available_rental_periods: Array.isArray(formData.available_rental_periods) ? formData.available_rental_periods : [],
-        slug: formData.slug || '',
+        memorabilia_ids: Array.isArray(formData.memorabilia_ids) && formData.memorabilia_ids.length > 0 ? formData.memorabilia_ids.map(String) : undefined,
+        merchandise_ids: Array.isArray(formData.merchandise_ids) && formData.merchandise_ids.length > 0 ? formData.merchandise_ids.map(String) : undefined,
+        product_ids: Array.isArray(formData.product_ids) && formData.product_ids.length > 0 ? formData.product_ids.map(String) : undefined,
+        images: Array.isArray(formData.images) && formData.images.length > 0 ? formData.images : undefined,
+        product_types: Array.isArray(formData.product_types) && formData.product_types.length > 0 ? formData.product_types : undefined,
+        movies: Array.isArray(formData.movies) && formData.movies.length > 0 ? formData.movies : undefined,
+        genres: Array.isArray(formData.genres) && formData.genres.length > 0 ? formData.genres : undefined,
+        keywords: Array.isArray(formData.keywords) && formData.keywords.length > 0 ? formData.keywords : undefined,
+        available_rental_periods: Array.isArray(formData.available_rental_periods) && formData.available_rental_periods.length > 0 ? formData.available_rental_periods : undefined,
+        slug: formData.slug || undefined,
       };
+
+      // Remove undefined fields (API may reject them)
+      Object.keys(cleanedData).forEach(
+        (key) => cleanedData[key as keyof ProductCreate] === undefined && delete cleanedData[key as keyof ProductCreate]
+      );
 
       if (isEditing && editProductId) {
         await updateProduct({ id: editProductId, data: cleanedData });
@@ -263,13 +268,27 @@ export default function AddProduct() {
       }
       
       navigate('/admin/product-list');
-    } catch (error) {
-      console.error('Failed to save product:', error);
-      if (error instanceof Error && error.message.includes('Authentication')) {
+    } catch (error: any) {
+      // Try to extract API error details
+      let apiErrorMsg = '';
+      if (error?.response && typeof error.response.json === 'function') {
+        try {
+          const data = await error.response.json();
+          apiErrorMsg = data?.message || JSON.stringify(data);
+        } catch {
+          apiErrorMsg = error.message || String(error);
+        }
+      } else if (error?.message) {
+        apiErrorMsg = error.message;
+      } else {
+        apiErrorMsg = JSON.stringify(error);
+      }
+      console.error('Failed to save product:', apiErrorMsg, error);
+      if (apiErrorMsg.toLowerCase().includes('authentication')) {
         error('Authentication Error', 'Your session has expired. Please login again.');
         navigate('/admin/login');
       } else {
-        error('Save Failed', `Failed to save product: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
+        error('Save Failed', `Failed to save product: ${apiErrorMsg}`);
       }
     }
   };

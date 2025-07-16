@@ -100,6 +100,11 @@ class AuthService {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
+        // If refresh fails, clear tokens and logout
+        this.clearTokensFromStorage();
+        if (this.onLogoutCallback) {
+          this.onLogoutCallback();
+        }
         throw new Error(error.detail || 'Token refresh failed');
       }
 
@@ -109,7 +114,6 @@ class AuthService {
     } catch (error) {
       console.error('Token refresh error:', error);
       this.clearTokensFromStorage();
-      // Notify AuthContext about logout
       if (this.onLogoutCallback) {
         this.onLogoutCallback();
       }
