@@ -161,7 +161,6 @@ export default function Homepage() {
       setIsSubmittingContact(false);
     }
   };
-  };
 
   return (
     <div className="min-h-screen bg-black text-white">
