@@ -32,6 +32,7 @@ export default function Homepage() {
     phone: '',
     comments: ''
   });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   
   // Touch/swipe state for mobile
   const [touchStart, setTouchStart] = useState(null);
@@ -136,20 +137,30 @@ export default function Homepage() {
   const handleViewCollection = () => {
     navigate('/catalog');
   };
-
   // In your contact form submit handler:
   const handleContactFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmittingContact(true);
     try {
       await sendLead({
         ...contactFormData,
         formType: 'contact_us'
       });
       showNotification('Thank you for contacting us!', 'success');
-      // ...reset form, close modal, etc...
+      setContactFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        comments: ''
+      });
+      setShowContactModal(false);
     } catch (err) {
       showNotification('Failed to send your message. Please try again.', 'error');
+    } finally {
+      setIsSubmittingContact(false);
     }
+  };
   };
 
   return (
@@ -450,7 +461,7 @@ export default function Homepage() {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">Email*</label>
                     <input
