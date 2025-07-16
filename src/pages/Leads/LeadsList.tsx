@@ -231,7 +231,7 @@ export default function LeadsList() {
           )}
 
           {/* Status Update */}
-          <div className="border-t pt-4">
+          <div className="border-t pt-4 hidden">
             <h4 className="font-medium text-gray-900 mb-3">Update Status</h4>
             <div className="flex flex-wrap gap-2">
               {['new', 'contacted', 'in_progress', 'completed', 'cancelled'].map((status) => (

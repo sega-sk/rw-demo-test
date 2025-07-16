@@ -194,7 +194,7 @@ export default function Dashboard() {
                     <dt className="text-sm font-medium text-gray-500 truncate">{item.name}</dt>
                     <dd className="flex items-baseline">
                       <div className="text-2xl font-semibold text-gray-900">{item.value}</div>
-                      <div className={`ml-2 flex items-baseline text-sm font-semibold ${
+                      <div className={`hidden ml-2 flex items-baseline text-sm font-semibold ${
                         item.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
                       }`}>
                         {item.change}

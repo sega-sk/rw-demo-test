@@ -12,7 +12,7 @@ import './index.css';
 
 // Developer signature
 console.log('%c🎬 Reel Wheels Experience', 'color: #bf9e47; font-size: 24px; font-weight: bold;');
-console.log('%c⚡ Developed by SeGa_cc', 'color: #3b82f6; font-size: 16px; font-weight: bold;');
+console.log('%c⚡ SeGa Dev.', 'color: #3b82f6; font-size: 11px; font-weight: bold; letter-spacing: 2px;');
 console.log('%c🚀 Powered by DealerTower', 'color: #10b981; font-size: 14px;');
 console.log('%c📧 Contact: https://dealertower.com', 'color: #6b7280; font-size: 12px;');
 

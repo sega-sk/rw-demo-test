@@ -1,12 +1,17 @@
 /* Additional CSS for custom styling */
 /* SeGa edition */
 
+.top-announcement {
+  background: #111 !important;
+  color: #fff !important;
+}
+
 textarea[name="comments"] {
   color: #000 !important;
 }
 
-body .group-hover\:scale-105,
-body .hover\:scale-105 {
+.group-hover\:scale-105,
+.hover\:scale-105 {
   transform: none !important;
 }
 
@@ -121,8 +126,8 @@ body .bg-blue-400 {
     transform: none !important;
 }
 
-body .shadow-xl {
-    box-shadow: 0 3px 6px rgba(0,0,0,.16);
+.shadow-xl {
+    box-shadow: 0 3px 6px rgba(0,0,0,.16) !important;
 }
 
 @media(max-width: 767px) {
@@ -1394,6 +1399,10 @@ footer a:hover {
 .homepage-hero-slider,
 .product-detail-main-slider {
   background-color: #000;
+}
+
+.homepage-hero-slider .slider-container > .ease-in-out {
+  transform: none !important;
 }
 
 /* Fix white background issues */

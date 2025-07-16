@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
-import { useMutation } from '../../hooks/useApi';
+import { useMutation, useApi } from '../../hooks/useApi';
 import type { MerchandiseCreate } from '../../services/api';
 import Button from '../../components/UI/Button';
 import FormField from '../../components/Forms/FormField';
@@ -23,6 +23,10 @@ export default function AddMerchandise() {
   const [newTag, setNewTag] = useState('');
   const { mutate: createMerchandise, loading } = useMutation(
     (data: MerchandiseCreate) => apiService.createMerchandise(data)
+  );
+  const { data: allProductsData } = useApi(
+    () => apiService.getProducts({ limit: 100 }),
+    { immediate: true, cacheKey: 'merch-add-all-products', cacheTTL: 5 * 60 * 1000, staleWhileRevalidate: true }
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -113,6 +117,29 @@ export default function AddMerchandise() {
               />
               <Button type="button" variant="outline" size="sm" onClick={handleAddTag}>Add</Button>
             </div>
+          </div>
+        </FormField>
+        <FormField label="Related Products">
+          <div className="border rounded-lg max-h-48 overflow-y-auto p-2 bg-white">
+            {(allProductsData?.rows || []).map((product) => (
+              <label key={product.id} className="flex items-center space-x-2 mb-1">
+                <input
+                  type="checkbox"
+                  checked={formData.product_ids?.includes(product.id) || false}
+                  onChange={e => {
+                    const checked = e.target.checked;
+                    setFormData(prev => ({
+                      ...prev,
+                      product_ids: checked
+                        ? [...(prev.product_ids || []), product.id]
+                        : (prev.product_ids || []).filter(id => id !== product.id)
+                    }));
+                  }}
+                  className="rounded text-blue-600"
+                />
+                <span className="text-xs">{product.title}</span>
+              </label>
+            ))}
           </div>
         </FormField>
         <FormField label="Description">
