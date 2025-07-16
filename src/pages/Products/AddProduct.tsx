@@ -58,6 +58,7 @@ export default function AddProduct() {
     background_image_url: null,
     is_background_image_activated: false,
     is_trending_model: false,
+    is_on_homepage_slider: false, // <-- add this line
     sale_price: null,
     retail_price: null,
     rental_price_hourly: null,
@@ -104,6 +105,7 @@ export default function AddProduct() {
         background_image_url: editProduct.background_image_url || null,
         is_background_image_activated: editProduct.is_background_image_activated || false,
         is_trending_model: editProduct.is_trending_model || false,
+        is_on_homepage_slider: editProduct.is_on_homepage_slider || false, // <-- add this line
         sale_price: editProduct.sale_price || null,
         retail_price: editProduct.retail_price || null,
         rental_price_hourly: editProduct.rental_price_hourly || null,
@@ -163,7 +165,7 @@ export default function AddProduct() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
+
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
@@ -239,6 +241,8 @@ export default function AddProduct() {
         memorabilia_ids: Array.isArray(formData.memorabilia_ids) ? formData.memorabilia_ids.map(String) : [],
         merchandise_ids: Array.isArray(formData.merchandise_ids) ? formData.merchandise_ids.map(String) : [],
         product_ids: Array.isArray(formData.product_ids) ? formData.product_ids.map(String) : [],
+        is_trending_model: !!formData.is_trending_model,
+        is_on_homepage_slider: !!formData.is_on_homepage_slider,
       };
 
       if (isEditing && editProductId) {

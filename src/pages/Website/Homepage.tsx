@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Search, Heart, MapPin, Phone, Mail, Play, Pause } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
@@ -53,6 +53,16 @@ export default function Homepage() {
   // Use API data
   const products = productsData?.rows || [];
 
+  // Memoized filtered products for performance
+  const homepageSliderProducts = useMemo(
+    () => (products || []).filter(p => p.is_on_homepage_slider === true),
+    [products]
+  );
+  const trendingModelsProducts = useMemo(
+    () => (products || []).filter(p => p.is_trending_model === true),
+    [products]
+  );
+
   // Create slides array with hero slide + product slides
   const slides = [
     {
@@ -64,7 +74,7 @@ export default function Homepage() {
       image: '/reel wheel hero_first slide.webp',
       video: null
     },
-    ...products.slice(0, 18).map(product => ({
+    ...homepageSliderProducts.slice(0, 18).map(product => ({
       type: 'product',
       id: product.id,
       title: product.title,
@@ -213,7 +223,7 @@ export default function Homepage() {
         <div className="hollywood-rays"></div>
         
         <div className="slider-container relative w-full h-full" style={{ transformStyle: 'preserve-3d' }}>
-        {slides.map((slide, index) => (
+        {homepageSliderProducts.map((slide, index) => (
           <div
             key={index}
             className={`no-transform-here absolute inset-0 transition-all duration-1000 ease-in-out ${
@@ -377,7 +387,7 @@ export default function Homepage() {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <h2 className="text-3xl md:text-4xl font-bebas text-center mb-8 md:mb-16">TRENDING MODELS</h2>
           
-          <TrendingModelsSlider products={products} navigate={navigate} />
+          <TrendingModelsSlider products={trendingModelsProducts} navigate={navigate} />
 
           {/* See All Models Button */}
           <div className="text-center mt-8 md:mt-12">
@@ -492,7 +502,7 @@ export default function Homepage() {
                 </div>
                 <button
                   type="submit"
-                  disabled={isSubmittingContact}
+                  disabled={isSubmittingContact ? true : false}
                   className="w-full bg-yellow-600 text-white px-8 py-4 rounded-lg hover:bg-yellow-500 transition-colors font-inter font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmittingContact ? 'SENDING...' : 'SEND MESSAGE'}
@@ -581,8 +591,10 @@ function TrendingModelsSlider({ products, navigate }) {
   }, []);
   
   const itemsPerSlide = isMobile ? 1 : 4;
-  // Only trending products
-  const trendingProducts = products.filter(p => p.is_trending_product === true).slice(0, 12);
+  // Only products for homepage slider
+  const trendingProducts = products
+    .filter(p => p.is_on_homepage_slider === true)
+    .slice(0, 12);
   const totalSlides = Math.ceil(trendingProducts.length / itemsPerSlide);
 
   // Auto-advance slides every 4 seconds
