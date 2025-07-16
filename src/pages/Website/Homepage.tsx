@@ -41,7 +41,7 @@ export default function Homepage() {
 
   // Fetch products for slider
   const { data: productsData } = useApi(
-    () => apiService.getProducts({ limit: 8, sort: '-created_at' }),
+    () => apiService.getProducts({ limit: 18, sort: '-created_at' }),
     { 
       immediate: true,
       cacheKey: 'homepage-products',
@@ -64,7 +64,7 @@ export default function Homepage() {
       image: '/reel wheel hero_first slide.webp',
       video: null
     },
-    ...products.slice(0, 8).map(product => ({
+    ...products.slice(0, 18).map(product => ({
       type: 'product',
       id: product.id,
       title: product.title,
@@ -217,7 +217,7 @@ export default function Homepage() {
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+            className={`no-transform-here absolute inset-0 transition-all duration-1000 ease-in-out ${
               index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
             }`}
             role={index === currentSlide ? 'img' : 'presentation'}
