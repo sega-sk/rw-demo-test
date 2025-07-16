@@ -760,9 +760,35 @@ export default function AddProduct() {
                 ))}
               </div>
             </div>
-            {/* ...existing code... */}
-          </div>
 
+            {/* --- Add checkboxes for homepage/trending --- */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Homepage & Trending Settings</h3>
+              <div className="flex flex-col gap-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="is_trending_model"
+                    checked={formData.is_trending_model}
+                    onChange={handleInputChange}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2">Trending Model (show in Trending Models)</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="is_on_homepage_slider"
+                    checked={formData.is_on_homepage_slider}
+                    onChange={handleInputChange}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2">Show on Homepage Slider</span>
+                </label>
+              </div>
+            </div>
+            {/* --- end checkboxes --- */}
+          </div>
         </div>
         
         {/* Form Actions */}
