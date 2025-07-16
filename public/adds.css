@@ -1,9 +1,20 @@
 /* Additional CSS for custom styling */
 /* SeGa edition */
 
+.no-transform-here,
+.no-transform-here:hover,
+*:hover .no-transform-here,
+*:hover .no-transform-here:hover {
+  transform: none !important;;
+}
+
 .top-announcement {
   background: #111 !important;
   color: #fff !important;
+}
+
+[for="field-product-video-url"] {
+  margin-top: 1rem;
 }
 
 textarea[name="comments"] {

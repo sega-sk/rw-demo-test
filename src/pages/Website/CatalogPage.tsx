@@ -64,7 +64,7 @@ function ProductCard({ product, onProductClick, onFavoriteToggle, isFavorite }: 
             src={images[currentImageIndex]}
             alt={product.title}
             size="card"
-            className="w-full h-48 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="no-transform-here w-full h-48 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
             onClick={() => onProductClick(product)}
           />
         )}

@@ -112,9 +112,9 @@ export default function AddProduct() {
         rental_price_monthly: editProduct.rental_price_monthly || null,
         rental_price_yearly: editProduct.rental_price_yearly || null,
         video_url: editProduct.video_url || null,
-        memorabilia_ids: [],
-        merchandise_ids: [],
-        product_ids: [],
+        memorabilia_ids: Array.isArray(editProduct.memorabilia_ids) ? editProduct.memorabilia_ids.map(String) : [],
+        merchandise_ids: Array.isArray(editProduct.merchandise_ids) ? editProduct.merchandise_ids.map(String) : [],
+        product_ids: Array.isArray(editProduct.product_ids) ? editProduct.product_ids.map(String) : [],
       });
       
       if (editProduct.background_image_url) {
@@ -236,6 +236,9 @@ export default function AddProduct() {
         rental_price_monthly: formData.rental_price_monthly ? parseFloat(formData.rental_price_monthly.toString()) || null : null,
         rental_price_yearly: formData.rental_price_yearly ? parseFloat(formData.rental_price_yearly.toString()) || null : null,
         video_url: videoUrl.trim() || null,
+        memorabilia_ids: Array.isArray(formData.memorabilia_ids) ? formData.memorabilia_ids.map(String) : [],
+        merchandise_ids: Array.isArray(formData.merchandise_ids) ? formData.merchandise_ids.map(String) : [],
+        product_ids: Array.isArray(formData.product_ids) ? formData.product_ids.map(String) : [],
       };
 
       if (isEditing && editProductId) {

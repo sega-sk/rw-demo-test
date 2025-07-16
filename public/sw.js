@@ -1,6 +1,6 @@
-const CACHE_NAME = 'reel-wheels-v1';
-const STATIC_CACHE_NAME = 'reel-wheels-static-v1';
-const API_CACHE_NAME = 'reel-wheels-api-v1';
+const CACHE_NAME = 'reel-wheels-v2'; // <-- Increment this version on each deploy
+const STATIC_CACHE_NAME = 'reel-wheels-static-v2';
+const API_CACHE_NAME = 'reel-wheels-api-v2';
 
 // Static assets to cache
 const STATIC_ASSETS = [

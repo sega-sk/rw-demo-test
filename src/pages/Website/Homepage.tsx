@@ -631,7 +631,7 @@ function TrendingModelsSlider({ products, navigate }) {
                           src={product.images[0] || 'https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2'}
                           alt={product.title}
                           size="card"
-                          className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-lg ${isMobile ? 'h-64' : 'h-40 md:h-48'}`}
+                          className={`no-transform-here w-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-lg ${isMobile ? 'h-64' : 'h-40 md:h-48'}`}
                         />
                       </div>
                       <div className="p-4">

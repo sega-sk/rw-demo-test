@@ -34,7 +34,7 @@ function MemorabiliaCard({ item, onItemClick, onFavoriteToggle, isFavorite }: {
           src={images[currentImageIndex]}
           alt={item.title}
           size="card"
-          className="w-full h-48 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="no-transform-here w-full h-48 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
           onClick={() => onItemClick(item)}
         />
         

@@ -21,6 +21,7 @@ export default function MerchandiseList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [newTag, setNewTag] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false); // Add modal state
 
   // Form data for add/edit
   const [formData, setFormData] = useState<MerchandiseCreate>({
@@ -86,8 +87,12 @@ export default function MerchandiseList() {
       price: item.price,
       photos: item.photos,
       keywords: item.keywords,
-      product_ids: item.product_ids || [],
+      // Ensure product_ids is always an array of strings
+      product_ids: Array.isArray(item.product_ids)
+        ? item.product_ids.map(String)
+        : [],
     });
+    setShowEditModal(true); // Show modal or edit form
   };
 
   const handleDelete = async (itemId: string) => {
@@ -136,11 +141,24 @@ export default function MerchandiseList() {
     try {
       if (selectedItem) {
         // Update existing item
-        await updateMerchandise({ id: selectedItem.id, data: formData });
+        await updateMerchandise({
+          id: selectedItem.id,
+          data: {
+            ...formData,
+            product_ids: Array.isArray(formData.product_ids)
+              ? formData.product_ids.map(String)
+              : [],
+          },
+        });
         alert('Merchandise updated successfully!');
       } else {
         // Create new item
-        await createMerchandise(formData);
+        await createMerchandise({
+          ...formData,
+          product_ids: Array.isArray(formData.product_ids)
+            ? formData.product_ids.map(String)
+            : [],
+        });
         alert('Merchandise created successfully!');
       }
       
@@ -157,6 +175,7 @@ export default function MerchandiseList() {
       
       // Refresh data
       refetchMerchandise();
+      setShowEditModal(false);
     } catch (error) {
       console.error('Failed to save merchandise:', error);
       if (error instanceof Error && error.message.includes('Authentication')) {
@@ -430,8 +449,74 @@ export default function MerchandiseList() {
         </div>
       )}
 
-      {/* Only keep EditMerchandiseModal if present */}
-      {/* Product IDs Multi-field */}
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+            <h2 className="text-xl font-bold mb-4">{selectedItem ? 'Edit Merchandise' : 'Add Merchandise'}</h2>
+            <form onSubmit={handleSaveItem} className="space-y-4">
+              <FormField label="Title" required>
+                <Input name="title" value={formData.title} onChange={handleInputChange} required />
+              </FormField>
+              <FormField label="Subtitle">
+                <Input name="subtitle" value={formData.subtitle} onChange={handleInputChange} />
+              </FormField>
+              <FormField label="Price" required>
+                <Input name="price" type="number" value={formData.price} onChange={handleInputChange} required />
+              </FormField>
+              <FormField label="Description">
+                <Textarea name="description" value={formData.description} onChange={handleInputChange} rows={3} />
+              </FormField>
+              <FormField label="Connection Keywords">
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {(formData.keywords || []).map((tag, idx) => (
+                    <span key={idx} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-600">
+                      {tag}
+                      <button type="button" onClick={() => handleRemoveTag(tag)} className="ml-2 hover:text-red-600">×</button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex space-x-2">
+                  <Input
+                    placeholder="+Add Keywords"
+                    value={newTag}
+                    onChange={e => setNewTag(e.target.value)}
+                    onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                  />
+                  <Button type="button" variant="outline" size="sm" onClick={handleAddTag}>Add</Button>
+                </div>
+              </FormField>
+              <FormField label="Related Products">
+                <div className="border rounded-lg max-h-48 overflow-y-auto p-2 bg-white">
+                  {(allProductsData?.rows || []).map((product) => (
+                    <label key={product.id} className="flex items-center space-x-2 mb-1">
+                      <input
+                        type="checkbox"
+                        checked={formData.product_ids?.includes(product.id) || false}
+                        onChange={e => {
+                          const checked = e.target.checked;
+                          setFormData(prev => ({
+                            ...prev,
+                            product_ids: checked
+                              ? [...(prev.product_ids || []), product.id]
+                              : (prev.product_ids || []).filter(id => id !== product.id)
+                          }));
+                        }}
+                        className="rounded text-blue-600"
+                      />
+                      <span className="text-xs">{product.title}</span>
+                    </label>
+                  ))}
+                </div>
+              </FormField>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => { setShowEditModal(false); setSelectedItem(null); }}>Cancel</Button>
+                <Button type="submit" loading={creating || updating}>Save</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

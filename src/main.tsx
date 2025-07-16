@@ -59,6 +59,14 @@ const preloadCriticalResources = () => {
   });
 };
 
+// Client-side Cache Busting
+const BUILD_VERSION = '2024-07-08-1'; // Update this on each deploy
+
+if (localStorage.getItem('build-version') !== BUILD_VERSION) {
+  localStorage.clear();
+  localStorage.setItem('build-version', BUILD_VERSION);
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>

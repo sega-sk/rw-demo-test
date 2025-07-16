@@ -245,7 +245,7 @@ export default function ProductDetailPage() {
               src={images[currentImageIndex]}
               alt={currentProduct.title}
               size="hero"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="no-transform-here w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           )}
           
@@ -434,7 +434,7 @@ export default function ProductDetailPage() {
                           src={item.photos[0]}
                           alt={item.title}
                           size="card"
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="no-transform-here w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
                         <div className="w-full h-48 bg-gray-900 flex items-center justify-center">
@@ -489,7 +489,7 @@ export default function ProductDetailPage() {
                         src={item.photos[0] || '/memorabilia_balanced.webp'}
                         alt={item.title}
                         size="card"
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="no-transform-here w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="hidden absolute top-4 left-4 bg-purple-500 text-white px-2 py-1 rounded text-xs font-medium">
                         MEMORABILIA
