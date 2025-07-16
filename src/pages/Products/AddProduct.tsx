@@ -44,7 +44,7 @@ export default function AddProduct() {
   const editProductId = searchParams.get('edit');
   const isEditing = !!editProductId;
   
-  // Form state
+  // Form state (ensure correct types for API)
   const [formData, setFormData] = useState<ProductCreate>({
     title: '',
     subtitle: '',
@@ -55,21 +55,22 @@ export default function AddProduct() {
     keywords: [],
     available_rental_periods: [],
     images: [],
-    background_image_url: null,
+    background_image_url: '',
     is_background_image_activated: false,
     is_trending_model: false,
-    is_on_homepage_slider: false, // <-- add this line
-    sale_price: null,
-    retail_price: null,
-    rental_price_hourly: null,
-    rental_price_daily: null,
-    rental_price_weekly: null,
-    rental_price_monthly: null,
-    rental_price_yearly: null,
-    video_url: null,
+    is_on_homepage_slider: false,
+    sale_price: 0,
+    retail_price: 0,
+    rental_price_hourly: 0,
+    rental_price_daily: 0,
+    rental_price_weekly: 0,
+    rental_price_monthly: 0,
+    rental_price_yearly: 0,
+    video_url: '',
     memorabilia_ids: [],
     merchandise_ids: [],
     product_ids: [],
+    slug: '',
   });
 
   const [newKeyword, setNewKeyword] = useState('');
@@ -102,21 +103,22 @@ export default function AddProduct() {
         keywords: editProduct.keywords || [],
         available_rental_periods: editProduct.available_rental_periods || [],
         images: editProduct.images || [],
-        background_image_url: editProduct.background_image_url || null,
-        is_background_image_activated: editProduct.is_background_image_activated || false,
-        is_trending_model: editProduct.is_trending_model || false,
-        is_on_homepage_slider: editProduct.is_on_homepage_slider || false, // <-- add this line
-        sale_price: editProduct.sale_price || null,
-        retail_price: editProduct.retail_price || null,
-        rental_price_hourly: editProduct.rental_price_hourly || null,
-        rental_price_daily: editProduct.rental_price_daily || null,
-        rental_price_weekly: editProduct.rental_price_weekly || null,
-        rental_price_monthly: editProduct.rental_price_monthly || null,
-        rental_price_yearly: editProduct.rental_price_yearly || null,
-        video_url: editProduct.video_url || null,
+        background_image_url: editProduct.background_image_url || '',
+        is_background_image_activated: !!editProduct.is_background_image_activated,
+        is_trending_model: !!editProduct.is_trending_model,
+        is_on_homepage_slider: !!editProduct.is_on_homepage_slider,
+        sale_price: Number(editProduct.sale_price) || 0,
+        retail_price: Number(editProduct.retail_price) || 0,
+        rental_price_hourly: Number(editProduct.rental_price_hourly) || 0,
+        rental_price_daily: Number(editProduct.rental_price_daily) || 0,
+        rental_price_weekly: Number(editProduct.rental_price_weekly) || 0,
+        rental_price_monthly: Number(editProduct.rental_price_monthly) || 0,
+        rental_price_yearly: Number(editProduct.rental_price_yearly) || 0,
+        video_url: editProduct.video_url || '',
         memorabilia_ids: Array.isArray(editProduct.memorabilia_ids) ? editProduct.memorabilia_ids.map(String) : [],
         merchandise_ids: Array.isArray(editProduct.merchandise_ids) ? editProduct.merchandise_ids.map(String) : [],
         product_ids: Array.isArray(editProduct.product_ids) ? editProduct.product_ids.map(String) : [],
+        slug: editProduct.slug || '',
       });
       
       if (editProduct.background_image_url) {
@@ -225,33 +227,38 @@ export default function AddProduct() {
     }
     
     try {
-      // Clean up the data before sending
-      const cleanedData = {
+      // Prepare data for API
+      const cleanedData: ProductCreate = {
         ...formData,
-        background_image_url: backgroundImages[0] || null,
-        // Convert string prices to numbers or strings as expected by API
-        sale_price: formData.sale_price ? parseFloat(formData.sale_price.toString()) || null : null,
-        retail_price: formData.retail_price ? parseFloat(formData.retail_price.toString()) || null : null,
-        rental_price_hourly: formData.rental_price_hourly ? parseFloat(formData.rental_price_hourly.toString()) || null : null,
-        rental_price_daily: formData.rental_price_daily ? parseFloat(formData.rental_price_daily.toString()) || null : null,
-        rental_price_weekly: formData.rental_price_weekly ? parseFloat(formData.rental_price_weekly.toString()) || null : null,
-        rental_price_monthly: formData.rental_price_monthly ? parseFloat(formData.rental_price_monthly.toString()) || null : null,
-        rental_price_yearly: formData.rental_price_yearly ? parseFloat(formData.rental_price_yearly.toString()) || null : null,
-        video_url: videoUrl.trim() || null,
+        background_image_url: backgroundImages[0] || '',
+        video_url: videoUrl.trim() || '',
+        sale_price: Number(formData.sale_price) || 0,
+        retail_price: Number(formData.retail_price) || 0,
+        rental_price_hourly: Number(formData.rental_price_hourly) || 0,
+        rental_price_daily: Number(formData.rental_price_daily) || 0,
+        rental_price_weekly: Number(formData.rental_price_weekly) || 0,
+        rental_price_monthly: Number(formData.rental_price_monthly) || 0,
+        rental_price_yearly: Number(formData.rental_price_yearly) || 0,
+        is_trending_model: !!formData.is_trending_model,
+        is_on_homepage_slider: !!formData.is_on_homepage_slider,
+        is_background_image_activated: !!formData.is_background_image_activated,
         memorabilia_ids: Array.isArray(formData.memorabilia_ids) ? formData.memorabilia_ids.map(String) : [],
         merchandise_ids: Array.isArray(formData.merchandise_ids) ? formData.merchandise_ids.map(String) : [],
         product_ids: Array.isArray(formData.product_ids) ? formData.product_ids.map(String) : [],
-        is_trending_model: !!formData.is_trending_model,
-        is_on_homepage_slider: !!formData.is_on_homepage_slider,
+        images: Array.isArray(formData.images) ? formData.images : [],
+        product_types: Array.isArray(formData.product_types) ? formData.product_types : [],
+        movies: Array.isArray(formData.movies) ? formData.movies : [],
+        genres: Array.isArray(formData.genres) ? formData.genres : [],
+        keywords: Array.isArray(formData.keywords) ? formData.keywords : [],
+        available_rental_periods: Array.isArray(formData.available_rental_periods) ? formData.available_rental_periods : [],
+        slug: formData.slug || '',
       };
 
       if (isEditing && editProductId) {
-        // Update existing product
-        const result = await updateProduct({ id: editProductId, data: cleanedData });
+        await updateProduct({ id: editProductId, data: cleanedData });
         success('Product Updated', 'Product has been updated successfully!');
       } else {
-        // Create new product
-        const result = await createProduct(cleanedData);
+        await createProduct(cleanedData);
         success('Product Created', 'Product has been created successfully!');
       }
       
