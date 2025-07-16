@@ -1,27 +1,22 @@
 {
   "name": "Reel Wheels Experience",
-  "short_name": "Reel Wheels",
-  "description": "Premium movie vehicle rentals and memorabilia",
+  "short_name": "ReelWheels",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#000000",
-  "orientation": "portrait-primary",
+  "theme_color": "#bf9e47",
+  "description": "Rent iconic movie vehicles and memorabilia from Reel Wheels Experience.",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/logo-color.webp",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/webp"
     },
     {
-      "src": "/logo.png",
+      "src": "/logo-color.webp",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/webp"
     }
   ],
-  "categories": ["entertainment", "business"],
-  "lang": "en-US",
-  "dir": "ltr"
+  "lang": "en"
 }
