@@ -40,7 +40,7 @@ export default function WebsiteHeader({ onSearchClick, variant = 'light', classN
   return (
     <>
       {/* Promo Bar */}
-      <div className="top-announcement bg-yellow-600 text-black py-2 text-center text-sm font-medium font-inter">
+      <div className="top-announcement bg-yellow-600 py-2 text-center text-sm font-medium font-inter">
         <p>🎬 Bring Hollywood Magic to Your <a href="/catalog"><b>Event</b></a>!</p>
       </div>
 
