@@ -15,14 +15,42 @@ import type { Memorabilia, MemorabiliaCreate, MemorabiliaUpdate } from '../../se
 import Tooltip from '../../components/UI/Tooltip';
 import OptimizedImage from '../../components/UI/OptimizedImage';
 
+// Helper to clean memorabilia payload before sending to API
+function cleanMemorabiliaPayload(data: any) {
+  const cleaned: any = {};
+  const arrayFields = ['photos', 'keywords', 'product_ids'];
+  for (const key in data) {
+    let value = data[key];
+    if (arrayFields.includes(key)) {
+      if (Array.isArray(value)) {
+        cleaned[key] = value.filter((v: any) => v !== '' && v !== null && v !== undefined);
+      } else if (typeof value === 'string' && value.trim() === '') {
+        cleaned[key] = [];
+      } else if (value == null) {
+        cleaned[key] = [];
+      } else {
+        cleaned[key] = Array.isArray(value) ? value : [value];
+      }
+    } else if (typeof value === 'string') {
+      if (value.trim() !== '') {
+        cleaned[key] = value;
+      }
+    } else if (value !== undefined && value !== null) {
+      cleaned[key] = value;
+    }
+  }
+  return cleaned;
+}
+
 export default function MemorabiliaList() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { success, error } = useToastContext();
   const [selectedItem, setSelectedItem] = useState<Memorabilia | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [newTag, setNewTag] = useState('');
-  const [newKeyword, setNewKeyword] = useState('');
-  const [showEditModal, setShowEditModal] = useState(false); // Add modal state
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Form data for add/edit
   const [formData, setFormData] = useState<MemorabiliaCreate>({
@@ -32,6 +60,7 @@ export default function MemorabiliaList() {
     photos: [],
     keywords: [],
     product_ids: [],
+    slug: '',
   });
 
   // API hooks
@@ -86,12 +115,12 @@ export default function MemorabiliaList() {
       description: item.description || '',
       photos: item.photos,
       keywords: item.keywords,
-      // Ensure product_ids is always an array of strings
       product_ids: Array.isArray(item.product_ids)
         ? item.product_ids.map(String)
         : [],
+      slug: item.slug || '',
     });
-    setShowEditModal(true); // Show modal or edit form
+    setShowEditModal(true);
   };
 
   const handleDelete = async (itemId: string) => {
@@ -100,8 +129,8 @@ export default function MemorabiliaList() {
         await deleteMemorabilia(itemId);
         success('Memorabilia Deleted', 'Memorabilia item has been deleted successfully!');
         refetchMemorabilia();
-      } catch (error) {
-        console.error('Failed to delete memorabilia:', error);
+      } catch (err) {
+        error('Delete Failed', 'Failed to delete memorabilia.');
       }
     }
   };
@@ -125,43 +154,40 @@ export default function MemorabiliaList() {
 
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const { isAuthenticated } = useAuth();
+
     if (!isAuthenticated) {
       alert('Please login to save memorabilia');
       return;
     }
-    
+
     if (!formData.title.trim()) {
       alert('Title is required.');
       return;
     }
-    
+
     try {
+      const cleanedPayload = cleanMemorabiliaPayload(formData);
       if (selectedItem) {
-        // Update existing item
         await updateMemorabilia({
           id: selectedItem.id,
           data: {
-            ...formData,
-            product_ids: Array.isArray(formData.product_ids)
-              ? formData.product_ids.map(String)
+            ...cleanedPayload,
+            product_ids: Array.isArray(cleanedPayload.product_ids)
+              ? cleanedPayload.product_ids.map(String)
               : [],
           },
         });
-        alert('Memorabilia updated successfully!');
+        success('Memorabilia updated!', 'Memorabilia updated successfully!');
       } else {
-        // Create new item
         await createMemorabilia({
-          ...formData,
-          product_ids: Array.isArray(formData.product_ids)
-            ? formData.product_ids.map(String)
+          ...cleanedPayload,
+          product_ids: Array.isArray(cleanedPayload.product_ids)
+            ? cleanedPayload.product_ids.map(String)
             : [],
         });
-        alert('Memorabilia created successfully!');
+        success('Memorabilia created!', 'Memorabilia created successfully!');
       }
-      
-      // Reset form and close modals
+
       setFormData({
         title: '',
         subtitle: '',
@@ -169,19 +195,17 @@ export default function MemorabiliaList() {
         photos: [],
         keywords: [],
         product_ids: [],
+        slug: '',
       });
       setSelectedItem(null);
-      
-      // Refresh data
-      refetchMemorabilia();
       setShowEditModal(false);
-    } catch (error) {
-      console.error('Failed to save memorabilia:', error);
-      if (error instanceof Error && error.message.includes('Authentication')) {
+      refetchMemorabilia();
+    } catch (err: any) {
+      if (err instanceof Error && err.message.includes('Authentication')) {
         alert('Authentication expired. Please login again.');
         window.location.href = '/admin/login';
       } else {
-        alert('Failed to save memorabilia. Please try again.');
+        error('Save Failed', 'Failed to save memorabilia. Please try again.');
       }
     }
   };
@@ -194,8 +218,10 @@ export default function MemorabiliaList() {
       photos: [],
       keywords: [],
       product_ids: [],
+      slug: '',
     });
     setSelectedItem(null);
+    setShowEditModal(false);
   };
 
   // Use API data if available, otherwise use dummy data

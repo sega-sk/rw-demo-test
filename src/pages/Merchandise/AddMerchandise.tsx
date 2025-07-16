@@ -15,10 +15,11 @@ export default function AddMerchandise() {
     title: '',
     subtitle: '',
     description: '',
-    price: '',
+    price: 0,
     photos: [],
     keywords: [],
     product_ids: [],
+    slug: '',
   });
   const [newTag, setNewTag] = useState('');
   const { mutate: createMerchandise, loading } = useMutation(

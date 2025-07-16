@@ -60,29 +60,29 @@ interface Product {
 
 interface ProductCreate {
   title: string;
-  subtitle?: string;
-  description?: string;
-  product_types?: string[];
-  movies?: string[];
-  genres?: string[];
-  keywords?: string[];
-  available_rental_periods?: RentalPeriod[];
-  images?: string[];
-  background_image_url?: string;
-  is_background_image_activated?: boolean;
-  is_trending_model?: boolean;
-  sale_price?: number | string;
-  retail_price?: number | string;
-  rental_price_hourly?: number | string;
-  rental_price_daily?: number | string;
-  rental_price_weekly?: number | string;
-  rental_price_monthly?: number | string;
-  rental_price_yearly?: number | string;
-  slug?: string;
-  video_url?: string;
-  memorabilia_ids?: string[];
-  merchandise_ids?: string[];
-  product_ids?: string[];
+  subtitle: string;
+  description: string;
+  product_types: string[];
+  movies: string[];
+  genres: string[];
+  keywords: string[];
+  available_rental_periods: RentalPeriod[];
+  images: string[];
+  background_image_url: string;
+  is_background_image_activated: boolean;
+  is_trending_model: boolean;
+  is_on_homepage_slider: boolean;
+  sale_price: number;
+  retail_price: number;
+  rental_price_hourly: number;
+  rental_price_daily: number;
+  rental_price_weekly: number;
+  rental_price_monthly: number;
+  rental_price_yearly: number;
+  slug: string;
+  memorabilia_ids: string[];
+  merchandise_ids: string[];
+  product_ids: string[];
 }
 
 interface ProductUpdate extends Partial<ProductCreate> {}
@@ -98,6 +98,7 @@ interface Memorabilia {
   created_at?: string;
   updated_at?: string;
   products?: LinkedItem[];
+  product_ids?: string[];
 }
 
 interface MemorabiliaCreate {
@@ -106,8 +107,8 @@ interface MemorabiliaCreate {
   description?: string;
   photos?: string[];
   keywords?: string[];
-  slug?: string;
   product_ids?: string[];
+  slug?: string;
 }
 
 interface MemorabiliaUpdate extends Partial<MemorabiliaCreate> {}
@@ -117,24 +118,25 @@ interface Merchandise {
   title: string;
   subtitle?: string;
   description?: string;
-  price: string;
+  price: number;
   photos: string[];
   keywords: string[];
   slug: string;
   created_at?: string;
   updated_at?: string;
   products?: LinkedItem[];
+  product_ids?: string[];
 }
 
 interface MerchandiseCreate {
   title: string;
   subtitle?: string;
   description?: string;
-  price: number | string;
+  price: number;
   photos?: string[];
   keywords?: string[];
-  slug?: string;
   product_ids?: string[];
+  slug?: string;
 }
 
 interface MerchandiseUpdate extends Partial<MerchandiseCreate> {}

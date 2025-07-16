@@ -62,6 +62,10 @@ body .bg-blue-400 {
   }
 }
 
+.admin-main-content .fixed.bg-black {
+    background-color: rgba(0,0,0,.6) !important;
+}
+
 .website-header button.flex.items-center > .relative.h-8.w-auto {
   display: flex;
   align-items: center;

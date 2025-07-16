@@ -17,21 +17,24 @@ import OptimizedImage from '../../components/UI/OptimizedImage';
 
 export default function MerchandiseList() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { success, error } = useToastContext();
   const [selectedItem, setSelectedItem] = useState<Merchandise | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [newTag, setNewTag] = useState('');
-  const [showEditModal, setShowEditModal] = useState(false); // Add modal state
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Form data for add/edit
   const [formData, setFormData] = useState<MerchandiseCreate>({
     title: '',
     subtitle: '',
     description: '',
-    price: '',
+    price: 0,
     photos: [],
     keywords: [],
     product_ids: [],
+    slug: '',
   });
 
   // API hooks
@@ -84,15 +87,15 @@ export default function MerchandiseList() {
       title: item.title,
       subtitle: item.subtitle || '',
       description: item.description || '',
-      price: item.price,
+      price: Number(item.price),
       photos: item.photos,
       keywords: item.keywords,
-      // Ensure product_ids is always an array of strings
       product_ids: Array.isArray(item.product_ids)
         ? item.product_ids.map(String)
         : [],
+      slug: item.slug || '',
     });
-    setShowEditModal(true); // Show modal or edit form
+    setShowEditModal(true);
   };
 
   const handleDelete = async (itemId: string) => {
@@ -101,8 +104,8 @@ export default function MerchandiseList() {
         await deleteMerchandise(itemId);
         success('Merchandise Deleted', 'Merchandise item has been deleted successfully!');
         refetchMerchandise();
-      } catch (error) {
-        console.error('Failed to delete merchandise:', error);
+      } catch (err) {
+        error('Delete Failed', 'Failed to delete merchandise.');
       }
     }
   };
@@ -126,21 +129,19 @@ export default function MerchandiseList() {
 
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const { isAuthenticated } = useAuth();
+
     if (!isAuthenticated) {
       alert('Please login to save merchandise');
       return;
     }
-    
+
     if (!formData.title.trim() || !formData.price.toString().trim()) {
       alert('Title and price are required.');
       return;
     }
-    
+
     try {
       if (selectedItem) {
-        // Update existing item
         await updateMerchandise({
           id: selectedItem.id,
           data: {
@@ -150,39 +151,36 @@ export default function MerchandiseList() {
               : [],
           },
         });
-        alert('Merchandise updated successfully!');
+        success('Merchandise updated!', 'Merchandise updated successfully!');
       } else {
-        // Create new item
         await createMerchandise({
           ...formData,
           product_ids: Array.isArray(formData.product_ids)
             ? formData.product_ids.map(String)
             : [],
         });
-        alert('Merchandise created successfully!');
+        success('Merchandise created!', 'Merchandise created successfully!');
       }
-      
-      // Reset form and close modals
+
       setFormData({
         title: '',
         subtitle: '',
         description: '',
-        price: '',
+        price: 0,
         photos: [],
         keywords: [],
         product_ids: [],
+        slug: '',
       });
-      
-      // Refresh data
-      refetchMerchandise();
+      setSelectedItem(null);
       setShowEditModal(false);
-    } catch (error) {
-      console.error('Failed to save merchandise:', error);
-      if (error instanceof Error && error.message.includes('Authentication')) {
+      refetchMerchandise();
+    } catch (err: any) {
+      if (err instanceof Error && err.message.includes('Authentication')) {
         alert('Authentication expired. Please login again.');
         window.location.href = '/admin/login';
       } else {
-        alert('Failed to save merchandise. Please try again.');
+        error('Save Failed', 'Failed to save merchandise. Please try again.');
       }
     }
   };
@@ -192,11 +190,14 @@ export default function MerchandiseList() {
       title: '',
       subtitle: '',
       description: '',
-      price: '',
+      price: 0,
       photos: [],
       keywords: [],
       product_ids: [],
+      slug: '',
     });
+    setSelectedItem(null);
+    setShowEditModal(false);
   };
 
   // Use API data if available, otherwise use dummy data
@@ -510,7 +511,7 @@ export default function MerchandiseList() {
                 </div>
               </FormField>
               <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => { setShowEditModal(false); setSelectedItem(null); }}>Cancel</Button>
+                <Button type="button" variant="outline" onClick={handleCancel}>Cancel</Button>
                 <Button type="submit" loading={creating || updating}>Save</Button>
               </div>
             </form>

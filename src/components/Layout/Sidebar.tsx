@@ -102,12 +102,14 @@ export default function Sidebar({ className = '', onClose }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center px-6 border-b border-gray-200 relative z-10">
         <div className="flex items-center space-x-3">
-          <OptimizedImage
-            src="/logo.png" 
-            alt="Reel Wheels Experience" 
-            size="thumbnail"
-            className="h-10 w-auto"
-          />
+          <a href="/" className="flex items-center">
+            <OptimizedImage
+              src="/logo.png" 
+              alt="Reel Wheels Experience" 
+              size="thumbnail"
+              className="h-10 w-auto"
+            />
+          </a>
         </div>
       </div>
 

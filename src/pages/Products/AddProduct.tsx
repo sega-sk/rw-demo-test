@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Upload, Plus, X, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToastContext } from '../../contexts/ToastContext';
 import Button from '../../components/UI/Button';
 import FormField from '../../components/Forms/FormField';
 import Input from '../../components/Forms/Input';
@@ -10,7 +11,6 @@ import Select from '../../components/Forms/Select';
 import ImageUploader from '../../components/UI/ImageUploader';
 import { apiService } from '../../services/api';
 import { useApi, useMutation } from '../../hooks/useApi';
-import { useToastContext } from '../../contexts/ToastContext';
 import type { ProductCreate, RentalPeriod } from '../../services/api';
 import OptimizedImage from '../../components/UI/OptimizedImage';
 
@@ -33,10 +33,56 @@ const rentalPeriods = [
   { value: 'yearly', label: 'Yearly' },
 ];
 
+// Helper to clean product payload before sending to API
+function cleanProductPayload(data: ProductCreate | any): ProductCreate {
+  const cleaned: any = {};
+
+  // List of fields that should be arrays
+  const arrayFields = [
+    'product_types', 'movies', 'genres', 'keywords', 'available_rental_periods',
+    'images', 'memorabilia_ids', 'merchandise_ids', 'product_ids'
+  ];
+  // List of fields that should be numbers (or string numbers)
+  const numberFields = [
+    'sale_price', 'retail_price', 'rental_price_hourly', 'rental_price_daily',
+    'rental_price_weekly', 'rental_price_monthly', 'rental_price_yearly'
+  ];
+
+  for (const key in data) {
+    let value = data[key];
+    if (arrayFields.includes(key)) {
+      if (Array.isArray(value)) {
+        cleaned[key] = value.filter((v: any) => v !== '' && v !== null && v !== undefined);
+      } else if (typeof value === 'string' && value.trim() === '') {
+        cleaned[key] = [];
+      } else if (value == null) {
+        cleaned[key] = [];
+      } else {
+        cleaned[key] = Array.isArray(value) ? value : [value];
+      }
+    } else if (numberFields.includes(key)) {
+      if (value === '' || value === null || value === undefined) {
+        // Don't send empty price fields
+        continue;
+      }
+      // Accept both string and number, but always send as string or number
+      cleaned[key] = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+    } else if (typeof value === 'string') {
+      if (value.trim() !== '') {
+        cleaned[key] = value;
+      }
+      // else skip empty strings
+    } else if (value !== undefined && value !== null) {
+      cleaned[key] = value;
+    }
+  }
+  return cleaned;
+}
+
 export default function AddProduct() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { success, error } = useToastContext();
   
   // Get edit product ID from URL params
@@ -66,11 +112,10 @@ export default function AddProduct() {
     rental_price_weekly: 0,
     rental_price_monthly: 0,
     rental_price_yearly: 0,
-    video_url: '',
+    slug: '',
     memorabilia_ids: [],
     merchandise_ids: [],
     product_ids: [],
-    slug: '',
   });
 
   const [newKeyword, setNewKeyword] = useState('');
@@ -114,11 +159,10 @@ export default function AddProduct() {
         rental_price_weekly: Number(editProduct.rental_price_weekly) || 0,
         rental_price_monthly: Number(editProduct.rental_price_monthly) || 0,
         rental_price_yearly: Number(editProduct.rental_price_yearly) || 0,
-        video_url: editProduct.video_url || '',
+        slug: editProduct.slug || '',
         memorabilia_ids: Array.isArray(editProduct.memorabilia_ids) ? editProduct.memorabilia_ids.map(String) : [],
         merchandise_ids: Array.isArray(editProduct.merchandise_ids) ? editProduct.merchandise_ids.map(String) : [],
         product_ids: Array.isArray(editProduct.product_ids) ? editProduct.product_ids.map(String) : [],
-        slug: editProduct.slug || '',
       });
       
       if (editProduct.background_image_url) {
@@ -227,44 +271,17 @@ export default function AddProduct() {
     }
 
     try {
-      // Prepare data for API
-      const cleanedData: ProductCreate = {
-        ...formData,
-        background_image_url: backgroundImages[0] || '',
-        video_url: videoUrl.trim() || '',
-        sale_price: Number(formData.sale_price) || 0,
-        retail_price: Number(formData.retail_price) || 0,
-        rental_price_hourly: Number(formData.rental_price_hourly) || 0,
-        rental_price_daily: Number(formData.rental_price_daily) || 0,
-        rental_price_weekly: Number(formData.rental_price_weekly) || 0,
-        rental_price_monthly: Number(formData.rental_price_monthly) || 0,
-        rental_price_yearly: Number(formData.rental_price_yearly) || 0,
-        is_trending_model: !!formData.is_trending_model,
-        is_on_homepage_slider: !!formData.is_on_homepage_slider,
-        is_background_image_activated: !!formData.is_background_image_activated,
-        memorabilia_ids: Array.isArray(formData.memorabilia_ids) && formData.memorabilia_ids.length > 0 ? formData.memorabilia_ids.map(String) : undefined,
-        merchandise_ids: Array.isArray(formData.merchandise_ids) && formData.merchandise_ids.length > 0 ? formData.merchandise_ids.map(String) : undefined,
-        product_ids: Array.isArray(formData.product_ids) && formData.product_ids.length > 0 ? formData.product_ids.map(String) : undefined,
-        images: Array.isArray(formData.images) && formData.images.length > 0 ? formData.images : undefined,
-        product_types: Array.isArray(formData.product_types) && formData.product_types.length > 0 ? formData.product_types : undefined,
-        movies: Array.isArray(formData.movies) && formData.movies.length > 0 ? formData.movies : undefined,
-        genres: Array.isArray(formData.genres) && formData.genres.length > 0 ? formData.genres : undefined,
-        keywords: Array.isArray(formData.keywords) && formData.keywords.length > 0 ? formData.keywords : undefined,
-        available_rental_periods: Array.isArray(formData.available_rental_periods) && formData.available_rental_periods.length > 0 ? formData.available_rental_periods : undefined,
-        slug: formData.slug || undefined,
-      };
+      const cleanedPayload = cleanProductPayload(formData);
 
-      // Remove undefined fields (API may reject them)
-      Object.keys(cleanedData).forEach(
-        (key) => cleanedData[key as keyof ProductCreate] === undefined && delete cleanedData[key as keyof ProductCreate]
-      );
-
-      if (isEditing && editProductId) {
-        await updateProduct({ id: editProductId, data: cleanedData });
-        success('Product Updated', 'Product has been updated successfully!');
+      if (isEditing && editProduct) {
+        await updateProduct({
+          id: editProduct.id,
+          data: cleanedPayload,
+        });
+        success('Product updated!', 'Product updated successfully!');
       } else {
-        await createProduct(cleanedData);
-        success('Product Created', 'Product has been created successfully!');
+        await createProduct(cleanedPayload);
+        success('Product created!', 'Product created successfully!');
       }
       
       navigate('/admin/product-list');

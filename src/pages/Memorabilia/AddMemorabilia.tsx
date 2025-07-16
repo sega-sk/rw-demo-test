@@ -18,6 +18,7 @@ export default function AddMemorabilia() {
     photos: [],
     keywords: [],
     product_ids: [],
+    slug: '',
   });
   const [newTag, setNewTag] = useState('');
   const { mutate: createMemorabilia, loading } = useMutation(
