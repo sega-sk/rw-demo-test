@@ -148,6 +148,11 @@ export default function AddProduct() {
     }
   );
 
+  const { data: allProductsData } = useApi(
+    () => apiService.getProducts({ limit: 100 }),
+    { immediate: true, cacheKey: 'add-product-all-products', cacheTTL: 5 * 60 * 1000, staleWhileRevalidate: true }
+  );
+
   const { mutate: createProduct, loading: creating } = useMutation(
     (data: ProductCreate) => apiService.createProduct(data)
   );
@@ -697,6 +702,48 @@ export default function AddProduct() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
                     <p className="text-xs text-gray-500 truncate">${item.price}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Related Products */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Related Products</h3>
+                <button 
+                  type="button"
+                  onClick={() => navigate('/admin/product-list')}
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  View All
+                </button>
+              </div>
+              {(allProductsData?.rows || []).filter(p => p.id !== editProductId).slice(0, 10).map((item) => (
+                <div key={item.id} className="flex items-center space-x-3 mb-3">
+                  <input
+                    type="checkbox"
+                    checked={formData.product_ids?.includes(item.id) || false}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setFormData(prev => ({
+                        ...prev,
+                        product_ids: checked 
+                          ? [...(prev.product_ids || []), item.id]
+                          : (prev.product_ids || []).filter(id => id !== item.id)
+                      }));
+                    }}
+                    className="rounded text-blue-600"
+                  />
+                  <OptimizedImage
+                    src={item.images?.[0] || 'https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&dpr=2'} 
+                    alt={item.title}
+                    size="thumbnail"
+                    className="w-10 h-10 object-cover rounded"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
+                    <p className="text-xs text-gray-500 truncate">{item.subtitle}</p>
                   </div>
                 </div>
               ))}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Edit, Trash2, User, Shield, Mail, Calendar } from 'lucide-react';
+import { Search, Plus, Shield } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/UI/Button';
 import Badge from '../../components/UI/Badge';
@@ -290,7 +290,7 @@ export default function UsersList() {
         
         <div className="flex items-center justify-between mb-4">
           <Button icon={Plus} onClick={() => navigate('/admin/users/add')} className="btn-hover">
-            Add New
+            Add User
           </Button>
           
           <div className="text-sm text-gray-600">

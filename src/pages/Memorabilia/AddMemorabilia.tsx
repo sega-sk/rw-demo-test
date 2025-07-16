@@ -84,7 +84,7 @@ export default function AddMemorabilia() {
             onChange={handleInputChange}
           />
         </FormField>
-        <FormField label="Connection Tags">
+        <FormField label="Connection Keywords">
           <div className="space-y-2">
             <div className="flex flex-wrap gap-2 mb-2">
               {(formData.keywords || []).map((tag, idx) => (

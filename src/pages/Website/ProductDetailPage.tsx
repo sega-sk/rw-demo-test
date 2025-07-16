@@ -357,6 +357,35 @@ export default function ProductDetailPage() {
             {currentProduct.description && (
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 font-inter">Description</h3>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {/* Product Types */}
+                  {currentProduct.product_types?.map((type: string, idx: number) => (
+                    <span
+                      key={`ptype-${type}-${idx}`}
+                      className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-inter"
+                    >
+                      {type}
+                    </span>
+                  ))}
+                  {/* Genres */}
+                  {currentProduct.genres?.map((genre: string, idx: number) => (
+                    <span
+                      key={`genre-${genre}-${idx}`}
+                      className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-inter"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                  {/* Movies */}
+                  {currentProduct.movies?.map((movie: string, idx: number) => (
+                    <span
+                      key={`movie-${movie}-${idx}`}
+                      className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-inter"
+                    >
+                      {movie}
+                    </span>
+                  ))}
+                </div>
                 <p className="text-gray-700 leading-relaxed font-inter text-lg">{currentProduct.description}</p>
               </div>
             )}

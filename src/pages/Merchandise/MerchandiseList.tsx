@@ -44,6 +44,11 @@ export default function MerchandiseList() {
     }
   );
 
+  const { data: allProductsData } = useApi(
+    () => apiService.getProducts({ limit: 100 }),
+    { immediate: true, cacheKey: 'merch-list-all-products', cacheTTL: 5 * 60 * 1000, staleWhileRevalidate: true }
+  );
+
   const { mutate: createMerchandise, loading: creating } = useMutation(
     (data: MerchandiseCreate) => apiService.createMerchandise(data)
   );
@@ -81,7 +86,7 @@ export default function MerchandiseList() {
       price: item.price,
       photos: item.photos,
       keywords: item.keywords,
-      product_ids: [],
+      product_ids: item.product_ids || [],
     });
   };
 
@@ -364,7 +369,7 @@ export default function MerchandiseList() {
                         </div>
 
                         <div className="mb-4">
-                          <span className="text-sm text-gray-500 block mb-2">Connection Tags</span>
+                          <span className="text-sm text-gray-500 block mb-2">Connection Keywords</span>
                           <div className="flex flex-wrap gap-2">
                             {item.keywords.map((tag, index) => (
                               <span 
@@ -423,6 +428,31 @@ export default function MerchandiseList() {
       )}
 
       {/* Only keep EditMerchandiseModal if present */}
+      {/* Product IDs Multi-field */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Related Products</label>
+        <div className="flex flex-wrap gap-2">
+          {(allProductsData?.rows || []).map((product) => (
+            <label key={product.id} className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={formData.product_ids?.includes(product.id) || false}
+                onChange={e => {
+                  const checked = e.target.checked;
+                  setFormData(prev => ({
+                    ...prev,
+                    product_ids: checked
+                      ? [...(prev.product_ids || []), product.id]
+                      : (prev.product_ids || []).filter(id => id !== product.id)
+                  }));
+                }}
+                className="rounded text-blue-600"
+              />
+              <span className="text-xs">{product.title}</span>
+            </label>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
