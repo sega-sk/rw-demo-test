@@ -87,9 +87,10 @@ export default function MerchandiseList() {
       title: item.title,
       subtitle: item.subtitle || '',
       description: item.description || '',
-      price: Number(item.price),
+      price: Number(item.price) || 0,
       photos: item.photos,
       keywords: item.keywords,
+      // Ensure product_ids is always an array of strings and matches the response
       product_ids: Array.isArray(item.product_ids)
         ? item.product_ids.map(String)
         : [],

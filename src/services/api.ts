@@ -188,7 +188,7 @@ class ApiService {
         },
       });
 
-      // Handle token refresh for 401 errors
+      // If access token is expired, try to refresh
       if (response.status === 401 && authService.isAuthenticated()) {
         try {
           await authService.refreshAccessToken();
@@ -201,6 +201,7 @@ class ApiService {
             },
           });
         } catch (refreshError) {
+          // If refresh fails, logout and force re-login
           authService.logout();
           throw new Error('Session expired. Please login again.');
         }

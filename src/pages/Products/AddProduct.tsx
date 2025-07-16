@@ -175,6 +175,50 @@ export default function AddProduct() {
     }
   }, [isEditing, editProduct]);
 
+  // When editing, ensure memorabilia_ids and merchandise_ids are always arrays of strings
+  useEffect(() => {
+    if (isEditing && editProduct) {
+      setFormData({
+        title: editProduct.title || '',
+        subtitle: editProduct.subtitle || '',
+        description: editProduct.description || '',
+        product_types: editProduct.product_types || [],
+        movies: editProduct.movies || [],
+        genres: editProduct.genres || [],
+        keywords: editProduct.keywords || [],
+        available_rental_periods: editProduct.available_rental_periods || [],
+        images: editProduct.images || [],
+        background_image_url: editProduct.background_image_url || '',
+        is_background_image_activated: !!editProduct.is_background_image_activated,
+        is_trending_model: !!editProduct.is_trending_model,
+        is_on_homepage_slider: !!editProduct.is_on_homepage_slider,
+        sale_price: Number(editProduct.sale_price) || 0,
+        retail_price: Number(editProduct.retail_price) || 0,
+        rental_price_hourly: Number(editProduct.rental_price_hourly) || 0,
+        rental_price_daily: Number(editProduct.rental_price_daily) || 0,
+        rental_price_weekly: Number(editProduct.rental_price_weekly) || 0,
+        rental_price_monthly: Number(editProduct.rental_price_monthly) || 0,
+        rental_price_yearly: Number(editProduct.rental_price_yearly) || 0,
+        slug: editProduct.slug || '',
+        memorabilia_ids: Array.isArray(editProduct.memorabilia_ids)
+          ? editProduct.memorabilia_ids.map(String)
+          : [],
+        merchandise_ids: Array.isArray(editProduct.merchandise_ids)
+          ? editProduct.merchandise_ids.map(String)
+          : [],
+        product_ids: Array.isArray(editProduct.product_ids) ? editProduct.product_ids.map(String) : [],
+      });
+      
+      if (editProduct.background_image_url) {
+        setBackgroundImages([editProduct.background_image_url]);
+      }
+      
+      if (editProduct.video_url) {
+        setVideoUrl(editProduct.video_url);
+      }
+    }
+  }, [isEditing, editProduct]);
+
   // API hooks
   const { data: memorabiliaData } = useApi(
     () => apiService.getMemorabilia({ limit: 20 }),

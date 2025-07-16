@@ -90,7 +90,7 @@ class LeadsService {
         },
       });
 
-      // Handle token refresh for 401 errors
+      // If access token is expired, try to refresh
       if (response.status === 401 && authService.isAuthenticated()) {
         try {
           await authService.refreshAccessToken();

@@ -17,6 +17,13 @@ interface User {
   updated_at?: string;
 }
 
+/**
+ * AuthService handles authentication using access and refresh tokens.
+ * - On login: stores access_token (short-lived) and refresh_token (long-lived).
+ * - On 401 error: tries to refresh access_token using refresh_token.
+ * - If refresh fails: logs out and user must login again.
+ * - Tokens are stored in localStorage (for demo; use secure storage in production).
+ */
 class AuthService {
   private readonly API_BASE_URL = 'https://reel-wheel-api-x92jj.ondigitalocean.app';
   private accessToken: string | null = null;
@@ -56,6 +63,7 @@ class AuthService {
 
   async login(credentials: LoginCredentials): Promise<TokenResponse> {
     try {
+      // Login returns access_token and refresh_token
       const response = await fetch(`${this.API_BASE_URL}/v1/auth/login`, {
         method: 'POST',
         headers: {
@@ -73,6 +81,7 @@ class AuthService {
         throw new Error(error.detail || 'Login failed');
       }
 
+      // Store both tokens
       const tokens: TokenResponse = await response.json();
       this.saveTokensToStorage(tokens);
       return tokens;
@@ -88,6 +97,7 @@ class AuthService {
     }
 
     try {
+      // Use refresh_token to get new access_token
       const response = await fetch(`${this.API_BASE_URL}/v1/auth/refresh`, {
         method: 'POST',
         headers: {
@@ -108,6 +118,7 @@ class AuthService {
         throw new Error(error.detail || 'Token refresh failed');
       }
 
+      // Store new tokens
       const tokens: TokenResponse = await response.json();
       this.saveTokensToStorage(tokens);
       return tokens;
